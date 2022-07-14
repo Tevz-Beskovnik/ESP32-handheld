@@ -1,3 +1,10 @@
+/**+
+ * author: Tevž Beškovnik
+ * date: 14. 7. 2022
+ * description: graphics library with basic render functions extends on the Adafruit-GFX
+ * credit for all other functions goes to them
+*/
+
 #ifndef _GL_
 #define _GL_
 
