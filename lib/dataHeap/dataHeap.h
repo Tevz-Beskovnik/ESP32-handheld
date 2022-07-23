@@ -11,8 +11,9 @@
 struct DrawInstruction
 {
     uint16_t ins; // instruction
-    uint16_t x0, x1, x2; // x cooridnate sets
-    uint16_t y0, y1, y2; // y cooridnate sets
+    int16_t x0, x1, x2; // x cooridnate sets
+    int16_t y0, y1, y2; // y cooridnate sets
+    bool color;
 };
 
 /**

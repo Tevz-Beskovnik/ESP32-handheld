@@ -10,6 +10,7 @@
 #include <GL.h>
 #include <FreeRTOSConfig.h>
 #include <dataHeap.h>
+#include <math.h>
 
 /*
 TODO:
@@ -61,12 +62,56 @@ Node_heap_s pushHeap;
 
 GameLoop_t gameLoop;
 
-void setupConsole();
+GL gl;
+
+void initConsole(GL gl);
 
 void registerGameLoop(GameLoop_t);
 
 void drawLoop();
 
 void consoleLogic();
+
+// all instructions
+
+void noop(DrawInstruction d){ };
+
+void drawRect(DrawInstruction d) { gl.drawRect(d.x0, d.y0, abs(d.x0-d.x1), abs(d.y0-d.y1), d.color); };
+
+void drawRectD(DrawInstruction d) { gl.drawRectD(d.x0, d.y0, abs(d.x0-d.x1), abs(d.y0-d.y1)); };
+
+void fillRect(DrawInstruction d) { gl.fillRect(d.x0, d.y0, abs(d.x0-d.x1), abs(d.y0-d.y1), d.color); };
+
+void fillRectD(DrawInstruction d) { gl.fillRectD(d.x0, d.y0, abs(d.x0-d.x1), abs(d.y0-d.y1)); };
+
+void drawPoly(DrawInstruction d) { };
+
+void drawPolyD(DrawInstruction d);
+
+void fillPoly(DrawInstruction d);
+
+void fillPolyD(DrawInstruction d);
+
+void drawLine(DrawInstruction d);
+
+void drawLineD(DrawInstruction d);
+
+void drawLineDI(DrawInstruction d);
+
+void drawTex0(DrawInstruction d);
+
+void drawTex1(DrawInstruction d);
+
+void drawTex2(DrawInstruction d);
+
+void drawTex3(DrawInstruction d);
+
+void drawTex4(DrawInstruction d);
+
+void drawTex5(DrawInstruction d);
+
+void drawTex6(DrawInstruction d);
+
+void drawTex7(DrawInstruction d);
 
 #endif

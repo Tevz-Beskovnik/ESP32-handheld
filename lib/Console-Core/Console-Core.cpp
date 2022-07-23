@@ -1,7 +1,7 @@
 #include <Console-Core.h>
 
 
-void setupConsole()
+void initConsole()
 {
     
 }

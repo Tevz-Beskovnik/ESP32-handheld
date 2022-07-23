@@ -41,12 +41,6 @@
 #define TEXTURE_BINDING_6 6
 #define TEXTURE_BINDING_7 7
 
-#ifdef MULTY_CORE_DRAW
-void glCall(TaskFunction_t func, uint8_t* contextBuffer, uint8_t* texture, uint16_t x, uint16_t y, uint16_t tex_w, uint16_t tex_h);
-
-void xDrawTexture(void* params);
-#endif
-
 class GL : public Adafruit_SharpMem
 {
     public:
