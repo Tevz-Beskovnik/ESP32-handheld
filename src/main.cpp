@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <Arduino.h>
 #include <Adafruit_SharpMem.h>
+#include <Console-Core.h>
 #include <GL.h>
 
 #define SHARP_CLK  25

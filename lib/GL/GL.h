@@ -1,7 +1,7 @@
-/**+
- * author: Tevž Beškovnik
- * date: 14. 7. 2022
- * description: graphics library with basic render functions extends on the Adafruit-GFX
+/**
+ * @author: Tevž Beškovnik
+ * @date: 14. 7. 2022
+ * @description: graphics library with basic render functions extends on the Adafruit-GFX
  * credit for all other functions goes to them
 */
 
@@ -28,41 +28,18 @@
 #define WHITE 1
 #endif
 
-#ifndef MAX_TEX_BINDINGS
+// maximum amount of possible texture bindings
 #define MAX_TEX_BINDINGS 8
-#endif
 
-#ifndef TEXTURE_BINDING_0
+// texture bindings
 #define TEXTURE_BINDING_0 0
-#endif
-
-#ifndef TEXTURE_BINDING_1
 #define TEXTURE_BINDING_1 1
-#endif
-
-#ifndef TEXTURE_BINDING_2
 #define TEXTURE_BINDING_2 2
-#endif
-
-#ifndef TEXTURE_BINDING_3 
 #define TEXTURE_BINDING_3 3
-#endif
-
-#ifndef TEXTURE_BINDING_4
 #define TEXTURE_BINDING_4 4
-#endif
-
-#ifndef TEXTURE_BINDING_5
 #define TEXTURE_BINDING_5 5
-#endif
-
-#ifndef TEXTURE_BINDING_6
 #define TEXTURE_BINDING_6 6
-#endif
-
-#ifndef TEXTURE_BINDING_7
 #define TEXTURE_BINDING_7 7
-#endif
 
 #ifdef MULTY_CORE_DRAW
 void glCall(TaskFunction_t func, uint8_t* contextBuffer, uint8_t* texture, uint16_t x, uint16_t y, uint16_t tex_w, uint16_t tex_h);
