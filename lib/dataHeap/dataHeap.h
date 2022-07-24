@@ -10,10 +10,15 @@
 */
 struct DrawInstruction
 {
-    uint16_t ins; // instruction
-    int16_t x0, x1, x2; // x cooridnate sets
-    int16_t y0, y1, y2; // y cooridnate sets
-    bool color;
+    uint8_t ins; // instruction
+    int16_t x0; // x cooridnate sets
+    int16_t y0; // y cooridnate sets
+    int16_t x1;
+    int16_t y1;
+    int16_t x2;
+    int16_t y2;
+    bool color; // color to be drawn
+    char* text; // text to be drawn
 };
 
 /**
