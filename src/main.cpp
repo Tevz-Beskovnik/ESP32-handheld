@@ -2,7 +2,6 @@
 #include <Arduino.h>
 #include <Adafruit_SharpMem.h>
 #include <Console-Core.h>
-#include <GL.h>
 
 #define SHARP_CLK  25
 #define SHARP_DI 26
@@ -12,11 +11,6 @@ GL display(SHARP_CLK, SHARP_DI, SHARP_CS, 400, 240);
 
 #define BLACK 0
 #define WHITE 1
-
-#define BUTTON_UP 35
-#define BUTTON_DOWN 33
-#define BUTTON_LEFT 34
-#define BUTTON_RIGHT 32
 
 #define MOVEMENT_SPEED 8
 

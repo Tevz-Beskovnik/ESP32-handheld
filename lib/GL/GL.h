@@ -5,6 +5,11 @@
  * credit for all other functions goes to them
 */
 
+/*
+TODO:
+    - Add support for rotation of textures
+*/
+
 #ifndef _GL_
 #define _GL_
 
