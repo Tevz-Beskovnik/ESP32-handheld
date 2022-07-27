@@ -17,9 +17,10 @@ TODO:
 #define _CONSOLE_
 
 #include <GL.h>
+#include <textures.h>
 #include <FreeRTOSConfig.h>
 
-#define NONE 0
+#define CONSOLE_INTERFACE 0
 #define GAME_1 1
 #define GAME_2 2
 #define GAME_3 3
@@ -58,6 +59,8 @@ typedef void(*GameSetup_t)();
 typedef void(*GameLoop_t)();
 
 uint8_t numGames = 1;
+
+uint8_t activeGame = 0;
 
 uint16_t screenWidth, screenHeight;
 
@@ -118,7 +121,7 @@ void registerGameLoop(GameSetup_t gameSetup, GameLoop_t game, const char* gameNa
 */
 void consoleInterfaceSetup()
 {
-
+    gl->loadTexture(controlsSprite, 96, 96, TEXTURE_BINDING_0);
 }
 
 /**
@@ -126,7 +129,35 @@ void consoleInterfaceSetup()
 */
 void consoleInterface()
 {
-    
+    gl->clearDisplayBuffer();
+
+    gl->fillRect(0, 0, 400, 240, WHITE);
+    gl->fillRectD(4, 4, 390, 230);
+    gl->fillRect(9, 9, 380, 220, BLACK);
+    gl->fillRectD(4, 4, 110, 20);
+    gl->fillRect(0, 0, 110, 20, WHITE);
+    gl->fillTriangleD(99, 23, 114, 24, 114, 9);
+    gl->fillTriangle(104, 24, 114, 25, 115, 14, BLACK);
+    gl->setCursor(20, 8);
+    gl->setTextSize(1);
+    gl->setTextColor(BLACK);
+    gl->print("ESP-HANDHEALD");
+
+    gl->fillRect(19, 34, 120, 186, WHITE);
+    gl->setCursor(28, 40);
+    gl->setTextSize(2);
+    gl->print("Controls:");
+    gl->drawTexture(25, 60, TEXTURE_BINDING_0);
+    gl->setCursor(22, 140);
+    gl->println("Arrow key:");
+    gl->setCursor(25, 156);
+    gl->println("Selection");
+    gl->setCursor(22, 178);
+    gl->println("A button:");
+    gl->setCursor(25, 194);
+    gl->print("Confirm");
+
+    gl->refresh();   
 }
 
 /**
@@ -136,12 +167,43 @@ void consoleInterface()
 */
 void launchGame(uint8_t gameId)
 {
+    activeGame = gameId;
 
+    gameSetups[activeGame]();
 }
 
-void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenWidth, uint16_t screenHeight)
-{
+void exitGame() {
+    activeGame = CONSOLE_INTERFACE;
 
+    gameSetups[activeGame]();
+}
+
+/**
+ * @brief function that should run every loop
+*/
+void consoleLoop() {
+    gameLoops[activeGame]();
+}
+
+void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenW, uint16_t screenH)
+{
+    gl = new GL(clk, di, cs, screenW, screenH);
+
+    gl->initGL();
+    gl->clearDisplay();
+
+    pinMode(BUTTON_UP, INPUT);
+    pinMode(BUTTON_DOWN, INPUT);
+    pinMode(BUTTON_LEFT, INPUT);
+    pinMode(BUTTON_RIGHT, INPUT);
+
+    screenWidth = screenW;
+    screenHeight = screenH;
+
+    gameSetups[CONSOLE_INTERFACE] = consoleInterfaceSetup;
+    gameLoops[CONSOLE_INTERFACE] = consoleInterface;
+
+    gameSetups[CONSOLE_INTERFACE]();
 }
 
 #endif
