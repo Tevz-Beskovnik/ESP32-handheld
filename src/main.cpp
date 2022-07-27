@@ -150,11 +150,39 @@ uint8_t tileMap[512] = {
   0b11111111, 0b11111111, 0b01111111, 0b11111110, 0b11111111, 0b00000001, 0b10000000, 0b11111111 
 };
 
+void gameSetup1() {
+  gl->loadTileMap(tileMap, 64, 64, 32, 32);
+  gl->loadTileFromMap(0, 0, TEXTURE_BINDING_0);
+  gl->loadTileFromMap(1, 0, TEXTURE_BINDING_1);
+}
+
+void gameLoop1(){
+  gl->clearDisplayBuffer();
+  gl->drawTexture(192, 64, TEXTURE_BINDING_1);
+  gl->drawTexture(64, 32, TEXTURE_BINDING_1);
+  gl->drawTexture(64, 160, TEXTURE_BINDING_1);
+  gl->drawTexture(128, 128, TEXTURE_BINDING_1);
+  gl->drawTexture(320, 192, TEXTURE_BINDING_1);
+  if(digitalRead(BUTTON_UP))
+    y-=MOVEMENT_SPEED;
+  if(digitalRead(BUTTON_DOWN))
+    y+=MOVEMENT_SPEED;
+  if(digitalRead(BUTTON_LEFT))
+    x-=MOVEMENT_SPEED;
+  if(digitalRead(BUTTON_RIGHT))
+    x+=MOVEMENT_SPEED;
+  //display.drawBitmap(x, y, sprite, 32, 32, BLACK);
+  //display.fillRectD(x, y, 40, 40);
+  gl->drawTexture(x, y, TEXTURE_BINDING_0);
+  gl->refresh();
+}
 
 void setup(void)
 {
   Serial.begin(9600);
   Serial.println("Hello!");
+  registerGame(gameSetup1, gameLoop1, "Test game 1");
+  registerGame(gameSetup1, gameLoop1, "Test game 2");
 
   setupConsole(SHARP_CLK, SHARP_DI, SHARP_CS, 400, 240);
 
@@ -171,22 +199,4 @@ void setup(void)
 void loop(void) 
 {
   consoleLoop();
-  /*display.clearDisplayBuffer();
-  display.drawTexture(192, 64, TEXTURE_BINDING_1);
-  display.drawTexture(64, 32, TEXTURE_BINDING_1);
-  display.drawTexture(64, 160, TEXTURE_BINDING_1);
-  display.drawTexture(128, 128, TEXTURE_BINDING_1);
-  display.drawTexture(320, 192, TEXTURE_BINDING_1);
-  if(digitalRead(BUTTON_UP))
-    y-=MOVEMENT_SPEED;
-  if(digitalRead(BUTTON_DOWN))
-    y+=MOVEMENT_SPEED;
-  if(digitalRead(BUTTON_LEFT))
-    x-=MOVEMENT_SPEED;
-  if(digitalRead(BUTTON_RIGHT))
-    x+=MOVEMENT_SPEED;
-  //display.drawBitmap(x, y, sprite, 32, 32, BLACK);
-  //display.fillRectD(x, y, 40, 40);
-  display.drawTexture(x, y, TEXTURE_BINDING_0);
-  display.refresh();*/
 }
