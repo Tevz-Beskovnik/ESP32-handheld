@@ -131,7 +131,7 @@ void consoleInterface()
 {
     gl->clearDisplayBuffer();
 
-    /*gl->fillRect(0, 0, 400, 240, WHITE);
+    gl->fillRect(0, 0, 400, 240, WHITE);
     gl->fillRectD(4, 4, 390, 230);
     gl->fillRect(9, 9, 380, 220, BLACK);
     gl->fillRectD(4, 4, 110, 20);
@@ -165,7 +165,7 @@ void consoleInterface()
         gl->fillRect(151, 59+(i*20), 6, 6, WHITE);
         gl->setCursor(160, 55+(i*20));
         gl->printf((const char*)gameNames[i]);
-    }*/
+    }
 
     gl->refresh();
 }
