@@ -94,8 +94,9 @@ class GL : public Display
     bool loadTileMap(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t tile_w, uint8_t tile_h);
     bool loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding = TEXTURE_BINDING_0);
 
-    bool loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t textureBinding = TEXTURE_BINDING_0);
+    bool loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t textureBinding = TEXTURE_BINDING_0, bool dynmaci = false);
     bool drawTexture(uint16_t x, uint16_t y, uint8_t textureBinding = TEXTURE_BINDING_0);
+    void clearTexture(uint8_t textureBinding = TEXTURE_BINDING_0);
 
     private:
     // gl stuff
@@ -108,6 +109,7 @@ class GL : public Display
     uint8_t* tex[8];
     uint16_t w[8];
     uint16_t h[8];
+    bool dynamicTex[8];
     uint16_t _w;
     uint16_t _h;
 

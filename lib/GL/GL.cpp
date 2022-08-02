@@ -294,8 +294,8 @@ void GL::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2
   drawLine(x2, y2, x0, y0, color);
 }
 
-void GL::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color) {
-
+void GL::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color) 
+{
   int16_t a, b, y, last;
 
   // Sort coordinates by Y order (y2 >= y1 >= y0)
@@ -322,7 +322,7 @@ void GL::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2
       a = x2;
     else if (x2 > b)
       b = x2;
-    drawLine(a, y0, b - a + 1, y0, color);
+    drawLine(a, y0, b + 1, y0, color);
     return;
   }
 
@@ -330,12 +330,6 @@ void GL::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2
           dx12 = x2 - x1, dy12 = y2 - y1;
   int32_t sa = 0, sb = 0;
 
-  // For upper part of triangle, find scanline crossings for segments
-  // 0-1 and 0-2.  If y1=y2 (flat-bottomed triangle), the scanline y1
-  // is included here (and second loop will be skipped, avoiding a /0
-  // error there), otherwise scanline y1 is skipped here and handled
-  // in the second loop...which also avoids a /0 error here if y0=y1
-  // (flat-topped triangle).
   if (y1 == y2)
     last = y1; // Include y1 scanline
   else
@@ -346,17 +340,11 @@ void GL::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2
     b = x0 + sb / dy02;
     sa += dx01;
     sb += dx02;
-    /* longhand:
-    a = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
-    b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-    */
     if (a > b)
       _swap_int16_t(a, b);
-    drawLine(a, y, b - a + 1, y, color);
+    drawLine(a, y, b + 1, y, color);
   }
 
-  // For lower part of triangle, find scanline crossings for segments
-  // 0-2 and 1-2.  This loop is skipped if y1=y2.
   sa = (int32_t)dx12 * (y - y1);
   sb = (int32_t)dx02 * (y - y0);
   for (; y <= y2; y++) {
@@ -364,13 +352,10 @@ void GL::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2
     b = x0 + sb / dy02;
     sa += dx12;
     sb += dx02;
-    /* longhand:
-    a = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
-    b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-    */
+
     if (a > b)
       _swap_int16_t(a, b);
-    drawLine(a, y, b - a + 1, y, color);
+    drawLine(a, y, b + 1, y, color);
   }
 }
 
@@ -649,9 +634,7 @@ bool GL::loadTileMap(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t t
   _texture_h = height;
   _tile_w = tile_w;
   _tile_h = tile_h;
-  Serial.printf("%i\n", width*height/8);
-  texture_buffer = (uint8_t*)malloc((width*height)/8);
-  memcpy((void*)texture_buffer, (void*)buffer, (width*height)/8);
+  texture_buffer = buffer;
   return true;
 }
 
@@ -700,7 +683,7 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
  * 
  * @param height height of texture (in pixels)
 */
-bool GL::loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t textureBinding)
+bool GL::loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t textureBinding, bool dynamic)
 {
   #ifndef UNSAFE_GL
   if(textureBinding < 0 || textureBinding > 2 || !(textureBinding < MAX_TEX_BINDINGS))
@@ -709,8 +692,8 @@ bool GL::loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t t
 
   w[textureBinding] = width;
   h[textureBinding] = height;
-  tex[textureBinding] = (uint8_t*)malloc((width*height)/8);
-  memcpy(tex[textureBinding], buffer, (width*height)/8);
+  tex[textureBinding] = buffer;
+  dynamicTex[textureBinding] = dynamic;
   return true;
 }
 
@@ -739,4 +722,21 @@ bool GL::drawTexture(uint16_t x, uint16_t y, uint8_t textureBinding)
     pointer_pos+=(_w/8);
   }
   return true;
+}
+
+/**
+ * @brief clear the texture stored at the buffer location
+ * 
+ * @param textureBinding texture binding to be cleared
+*/
+void GL::clearTexture(uint8_t textureBinding)
+{
+  if(dynamicTex[textureBinding])
+  {
+    free(tex[textureBinding]);
+  }
+  tex[textureBinding] = NULL;
+  w[textureBinding] = 0;
+  h[textureBinding] = 0;
+  dynamicTex[textureBinding] = false;
 }

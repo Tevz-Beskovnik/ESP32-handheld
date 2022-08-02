@@ -149,13 +149,21 @@ uint8_t tileMap[512] = {
   0b11111111, 0b11111111, 0b01111111, 0b11111110, 0b11111111, 0b00000001, 0b10000000, 0b11111111 
 };
 
-void gameSetup1() {
+void gameFinish1()
+{
+  Serial.println("end");
+}
+
+void gameSetup1() 
+{
+  Serial.println("Hello Amerika!");
   gl->loadTileMap(tileMap, 64, 64, 32, 32);
   gl->loadTileFromMap(0, 0, TEXTURE_BINDING_0);
   gl->loadTileFromMap(1, 0, TEXTURE_BINDING_1);
 }
 
-void gameLoop1(){
+void gameLoop1()
+{
   gl->clearDisplayBuffer();
   gl->drawTexture(192, 64, TEXTURE_BINDING_1);
   gl->drawTexture(64, 32, TEXTURE_BINDING_1);
@@ -179,9 +187,12 @@ void gameLoop1(){
 void setup(void)
 {
   Serial.begin(9600);
+  delay(2000);
   Serial.println("Hello!");
-  registerGame(gameSetup1, gameLoop1, "Test game 1");
-  registerGame(gameSetup1, gameLoop1, "Test game 2");
+  registerGame(gameSetup1, gameLoop1, gameFinish1,  "Test game 1");
+  registerGame(gameSetup1, gameLoop1, gameFinish1, "Test game 2");
+  registerGame(gameSetup1, gameLoop1, gameFinish1, "Crash bandicoot");
+  registerGame(gameSetup1, gameLoop1, gameFinish1, "Destiny 2");
 
   setupConsole(SHARP_CLK, SHARP_DI, SHARP_CS, 400, 240);
 
