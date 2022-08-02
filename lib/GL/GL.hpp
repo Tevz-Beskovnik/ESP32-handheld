@@ -17,6 +17,7 @@ TODO:
 #include <Print.h>
 #include <Display_driver.hpp>
 #include <pgmspace.h>
+#include <math.h>
 
 /*
     - esp32 max memory 52k
@@ -81,6 +82,9 @@ class GL : public Display
 
     void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
     void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
+
+    void drawCircle(uint16_t x, uint16_t y, uint8_t r, uint8_t color);
+    void fillCircle(uint16_t x, uint16_t y, uint8_t r, uint8_t color);
 
     void drawLineD(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1);
     void drawLineDI(uint16_t x, uint16_t y, uint16_t x1, uint16_t y1);

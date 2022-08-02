@@ -360,6 +360,56 @@ void GL::fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2
 }
 
 /**
+ * @brief draw a circle
+ * 
+ * @param x coordinate of the center of the circle
+ * 
+ * @param y coordinate of the center of the circle
+ * 
+ * @param r radius of the circle
+ * 
+ * @param color for the circle to be drawn in
+*/
+void GL::drawCircle(uint16_t x, uint16_t y, uint8_t r, uint8_t color)
+{
+  for(uint16_t i = x; i < x+(r/4*3); i++)
+  {
+    uint16_t y0 = (2*y + sqrtf((4*y*y) - 4*(i*i-2*i*x+x*x+y*y-r*r)))/2;
+    drawPixel(i, y0, color);  // <---- right half drawing
+    drawPixel(i, y-abs(y0-y), color);
+    drawPixel(x+abs(y0-y), y+abs(i-x), color);
+    drawPixel(x+abs(y0-y), y-abs(i-x), color);
+    drawPixel(x-abs(i-x), y0, color);  // <---- left half drawing
+    drawPixel(x-abs(i-x), y-abs(y0-y), color);
+    drawPixel(x-abs(y0-y), y+abs(i-x), color);
+    drawPixel(x-abs(y0-y), y-abs(i-x), color);
+  }
+}
+
+/**
+ * @brief draws a filled circle
+ * 
+ * @param x coordinate of the center of the circle
+ * 
+ * @param y coordinate of the center of the circle
+ * 
+ * @param r radius of the circle
+ * 
+ * @param color for the circle to be drawn in
+*/
+void GL::fillCircle(uint16_t x, uint16_t y, uint8_t r, uint8_t color)
+{
+  for(uint16_t i = x; i < x+(r/4*3); i++)
+  {
+    uint16_t y0 = (2*y + sqrtf((4*y*y) - 4*(i*i-2*i*x+x*x+y*y-r*r)))/2;
+    drawLine(x-abs(y0-y), y+abs(i-x), x-abs(y0-y), y-abs(i-x), color);
+    drawLine(x-abs(i-x), y-abs(y0-y), x-abs(i-x), y0, color);
+    drawLine(x+abs(y0-y), y+abs(i-x), x+abs(y0-y), y-abs(i-x), color);
+    drawLine(i, y0, i, y-abs(y0-y), color);
+  }
+}
+
+/**
  * @brief draws a dittered line
  * 
  * @param x0 first x coordinate
