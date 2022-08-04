@@ -187,7 +187,6 @@ void gameLoop1()
 void setup(void)
 {
   Serial.begin(9600);
-  delay(2000);
   Serial.println("Hello!");
   registerGame(gameSetup1, gameLoop1, gameFinish1,  "Test game 1");
   registerGame(gameSetup1, gameLoop1, gameFinish1, "Test game 2");

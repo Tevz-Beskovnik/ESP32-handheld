@@ -102,6 +102,8 @@ class GL : public Display
     bool drawTexture(uint16_t x, uint16_t y, uint8_t textureBinding = TEXTURE_BINDING_0);
     void clearTexture(uint8_t textureBinding = TEXTURE_BINDING_0);
 
+    void cropTexture(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBinding = TEXTURE_BINDING_0);
+
     private:
     // gl stuff
     uint8_t* context_buffer;

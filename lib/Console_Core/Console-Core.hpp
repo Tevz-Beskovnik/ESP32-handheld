@@ -120,7 +120,7 @@ void consoleInterfaceSetup()
     gl->textColor(BLACK);
     gl->print("ESP-HANDHEALD");
 
-    gl->fillRect(19, 34, 120, 186, WHITE);
+    /*gl->fillRect(19, 34, 120, 186, WHITE);
     gl->setCursor(28, 40);
     gl->fontSize(2);
     gl->print("Controls:");
@@ -136,7 +136,7 @@ void consoleInterfaceSetup()
 
     gl->setCursor(150, 35);
     gl->textColor(WHITE);
-    gl->print("Games:");
+    gl->print("Games:");*/
 
     memcpy((void*)UITexture, (void*)contextBuffer, screenHeight*screenWidth/8);
 

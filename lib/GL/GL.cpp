@@ -140,57 +140,30 @@ size_t GL::write(uint8_t c) {
 
 void GL::drawFastRawHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
-  int16_t rowBytes = ((_w + 7) / 8);
-  uint8_t *ptr = &context_buffer[(x / 8) + y * rowBytes];
-  size_t remainingWidthBits = w;
-
-  // check to see if first byte needs to be partially filled
-  if ((x & 7) > 0) 
+  uint8_t leftoverStart = x%8; // calculate how much the start offest from 8 is
+  uint8_t leftoverEnd = (w - (8 - leftoverStart)) % 8; // calculate if the width streches over some pixels
+  uint8_t begin = y * (_w / 8) + (x-leftoverStart); // memory address to begin drawing line at in draw buffer
+  uint8_t num = 0;
+  if(color == WHITE)
   {
-    // create bit mask for first byte
-    uint8_t startByteBitMask = 0x00;
-    for (int8_t i = (x & 7); ((i < 8) && (remainingWidthBits > 0)); i++) 
-    {
-      startByteBitMask |= (0x80 >> i);
-      remainingWidthBits--;
-    }
-
-    if (color > 0) 
-    {
-      *ptr |= startByteBitMask;
-    } 
-    else 
-    {
-      *ptr &= ~startByteBitMask;
-    }
-
-    ptr++;
+    num = 1;
+    *(uint8_t*)(context_buffer + begin) |= ((uint8_t)((uint8_t)num << leftoverStart) >> leftoverStart);
   }
-
-  if (remainingWidthBits > 0) 
+  else
+    *(uint8_t*)(context_buffer + begin) &= ((uint8_t)((uint8_t)num << leftoverStart) >> leftoverStart);
+  w -= 8 - leftoverStart - leftoverEnd;
+  w /= 8;
+  for(uint8_t i = 1; i < w; i++) 
   {
-    size_t remainingWholeBytes = remainingWidthBits / 8;
-    size_t lastByteBits = remainingWidthBits % 8;
-    uint8_t wholeByteColor = color > 0 ? 0xFF : 0x00;
-
-    memset(ptr, wholeByteColor, remainingWholeBytes);
-
-    if (lastByteBits > 0) 
-    {
-      uint8_t lastByteBitMask = 0x00;
-      for (size_t i = 0; i < lastByteBits; i++) 
-      {
-        lastByteBitMask |= (0x80 >> i);
-      }
-      ptr += remainingWholeBytes;
-
-      if (color > 0) {
-        *ptr |= lastByteBitMask;
-      } else {
-        *ptr &= ~lastByteBitMask;
-      }
-    }
+    if(color == WHITE)
+      *(uint8_t*)(context_buffer + begin + i) |= num;
+    else
+      *(uint8_t*)(context_buffer + begin + i) &= num;
   }
+  if(color == WHITE)
+    *(uint8_t*)(context_buffer + begin + w) |= ((uint8_t)((uint8_t)num >> (8 - leftoverEnd)) << (8 - leftoverEnd));
+  else
+    *(uint8_t*)(context_buffer + begin + w) &= ((uint8_t)((uint8_t)num >> (8 - leftoverEnd)) << (8 - leftoverEnd));
 }
 
 void GL::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) 
