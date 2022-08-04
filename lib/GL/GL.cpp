@@ -141,29 +141,31 @@ size_t GL::write(uint8_t c) {
 void GL::drawFastRawHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
   uint8_t leftoverStart = x%8; // calculate how much the start offest from 8 is
-  uint8_t leftoverEnd = (w - (8 - leftoverStart)) % 8; // calculate if the width streches over some pixels
-  uint8_t begin = y * (_w / 8) + (x-leftoverStart); // memory address to begin drawing line at in draw buffer
-  uint8_t num = 0;
+  Serial.printf("Start: %i ", leftoverStart);
+  uint8_t leftoverEnd = (w - leftoverStart) % 8; // calculate if the width streches over some pixels
+  Serial.printf("End: %i ", leftoverEnd);
+  uint8_t* begin = context_buffer + (y * (_w / 8) + ((x-leftoverStart))/8); // memory address to begin drawing line at in draw buffer
+
+
+  Serial.printf("Begin: %i ", ((uint8_t)((uint8_t)255 << (8 - leftoverStart)) >> (8 - leftoverStart)));
   if(color == WHITE)
-  {
-    num = 1;
-    *(uint8_t*)(context_buffer + begin) |= ((uint8_t)((uint8_t)num << leftoverStart) >> leftoverStart);
-  }
+    *(uint8_t*)(begin) |= ((uint8_t)((uint8_t)255 >> leftoverStart) << leftoverStart);
   else
-    *(uint8_t*)(context_buffer + begin) &= ((uint8_t)((uint8_t)num << leftoverStart) >> leftoverStart);
-  w -= 8 - leftoverStart - leftoverEnd;
+    *(uint8_t*)(begin) &= ((uint8_t)((uint8_t)255 << (8 - leftoverStart)) >> (8 - leftoverStart));
+
+  w -= leftoverStart - leftoverEnd;
   w /= 8;
-  for(uint8_t i = 1; i < w; i++) 
-  {
+  for(uint8_t i = 1; i < w; i++)
     if(color == WHITE)
-      *(uint8_t*)(context_buffer + begin + i) |= num;
+      *(uint8_t*)(begin + i) = 255;
     else
-      *(uint8_t*)(context_buffer + begin + i) &= num;
-  }
+      *(uint8_t*)(begin + i) = 0;
+
+  Serial.printf("Finish: %i\n", ((uint8_t)((uint8_t)255 >> leftoverEnd) << leftoverEnd));
   if(color == WHITE)
-    *(uint8_t*)(context_buffer + begin + w) |= ((uint8_t)((uint8_t)num >> (8 - leftoverEnd)) << (8 - leftoverEnd));
+    *(uint8_t*)(begin + w) |= ((uint8_t)((uint8_t)255 << (8 - leftoverEnd)) >> (8 - leftoverEnd));
   else
-    *(uint8_t*)(context_buffer + begin + w) &= ((uint8_t)((uint8_t)num >> (8 - leftoverEnd)) << (8 - leftoverEnd));
+    *(uint8_t*)(begin + w) &= ((uint8_t)((uint8_t)255 >> leftoverEnd) << leftoverEnd);
 }
 
 void GL::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) 
@@ -255,9 +257,9 @@ void GL::drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 
 void GL::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color) 
 {
-  for (int16_t i = x; i < x + w; i++) 
+  for (int16_t i = y; i < y + h; i++) 
   {
-    drawLine(i, y, i, y+h, color);
+    drawLine(x, i, x+w, i, color);
   }
 }
 
