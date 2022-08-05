@@ -203,19 +203,19 @@ void setup(void)
   display.loadTileFromMap(1, 0, TEXTURE_BINDING_1);*/
   Serial.println("Texture loaded");
   Serial.printf("Flash size: %i\n", ESP.getFlashChipSize());
-  gl->clearDisplayBuffer();
+  /*gl->clearDisplayBuffer();
   gl->fillRect(0, 0, 400, 240, BLACK);
   for(uint16_t i = 1; i < 50; i++)
     gl->drawFastRawHLine(2, i, i, WHITE);
 
   for(uint16_t i = 51; i < 102; i++)
     gl->drawLine(2, i, 2+i-51, i, WHITE);
-  gl->refresh();
+  gl->refresh();*/
 }
 
 
 void loop(void)
 {
-  gl->refresh();
-  //consoleLoop();
+  //gl->refresh();
+  consoleLoop();
 }

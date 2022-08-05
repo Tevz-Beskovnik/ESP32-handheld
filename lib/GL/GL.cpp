@@ -149,7 +149,6 @@ void GL::drawFastRawHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
       *begin |= (~lineCap[7-leftoverStart] & (lineCap[(7-leftoverStart-w)]));
     else
       *begin &= (lineCap[7-leftoverStart] | (~lineCap[(7-(leftoverStart-w))]));
-    Serial.printf("w = %i, %i = %i\n", w, (uint8_t)(lineCap[(7-(leftoverStart-w))]), (uint8_t)(~lineCap[7-leftoverStart] | lineCap[(7-(leftoverStart-w))]));
     return;
   }
 
@@ -266,7 +265,8 @@ void GL::fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
 {
   for (int16_t i = y; i < y + h; i++) 
   {
-    drawLine(x, i, x+w, i, color);
+    //drawLine(x, i, x+w, i, color);
+    drawFastRawHLine(x, i, w, color);
   }
 }
 
