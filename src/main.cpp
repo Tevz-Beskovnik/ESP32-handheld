@@ -187,6 +187,7 @@ void gameLoop1()
 void setup(void)
 {
   Serial.begin(9600);
+  delay(2000);
   Serial.println("Hello!");
   registerGame(gameSetup1, gameLoop1, gameFinish1,  "Test game 1");
   registerGame(gameSetup1, gameLoop1, gameFinish1, "Test game 2");
@@ -203,9 +204,12 @@ void setup(void)
   Serial.println("Texture loaded");
   Serial.printf("Flash size: %i\n", ESP.getFlashChipSize());
   gl->clearDisplayBuffer();
-  //gl->fillRect(0, 0, 400, 240, BLACK);
+  gl->fillRect(0, 0, 400, 240, BLACK);
   for(uint16_t i = 1; i < 50; i++)
-    gl->drawFastRawHLine(2, i, i, BLACK);
+    gl->drawFastRawHLine(2, i, i, WHITE);
+
+  for(uint16_t i = 51; i < 102; i++)
+    gl->drawLine(2, i, 2+i-51, i, WHITE);
   gl->refresh();
 }
 

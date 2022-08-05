@@ -137,42 +137,49 @@ size_t GL::write(uint8_t c) {
   return 1;
 }
 
+const uint8_t PROGMEM lineCap[7] = {127, 63, 31, 15, 7, 3, 1};
 
 void GL::drawFastRawHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
 {
-  uint8_t leftoverStart = x%8; // calculate how much the start offest from 8 is
-  Serial.printf("Start: %i ", leftoverStart);
-  uint8_t leftoverEnd = (w - leftoverStart) % 8; // calculate if the width streches over some pixels
-  Serial.printf("End: %i ", leftoverEnd);
-  uint8_t* begin = context_buffer + (y * (_w / 8) + ((x-leftoverStart))/8); // memory address to begin drawing line at in draw buffer
-
-
-  Serial.printf("Begin: %i ", ((uint8_t)((uint8_t)255 << (8 - leftoverStart)) >> (8 - leftoverStart)));
-  if(color == WHITE)
-    *(uint8_t*)(begin) |= ((uint8_t)((uint8_t)255 >> leftoverStart) << leftoverStart);
-  else
-    *(uint8_t*)(begin) &= ((uint8_t)((uint8_t)255 << (8 - leftoverStart)) >> (8 - leftoverStart));
-
-  w -= leftoverStart - leftoverEnd;
-  w /= 8;
-  for(uint8_t i = 1; i < w; i++)
+  uint8_t leftoverStart = x % 8;
+  uint8_t* begin = context_buffer + (y * (_w / 8) + (x)/8);
+  if(8-leftoverStart > w)
+  {
     if(color == WHITE)
-      *(uint8_t*)(begin + i) = 255;
+      *begin |= (~lineCap[7-leftoverStart] & (lineCap[(7-leftoverStart-w)]));
     else
-      *(uint8_t*)(begin + i) = 0;
+      *begin &= (lineCap[7-leftoverStart] | (~lineCap[(7-(leftoverStart-w))]));
+    Serial.printf("w = %i, %i = %i\n", w, (uint8_t)(lineCap[(7-(leftoverStart-w))]), (uint8_t)(~lineCap[7-leftoverStart] | lineCap[(7-(leftoverStart-w))]));
+    return;
+  }
 
-  Serial.printf("Finish: %i\n", ((uint8_t)((uint8_t)255 >> leftoverEnd) << leftoverEnd));
   if(color == WHITE)
-    *(uint8_t*)(begin + w) |= ((uint8_t)((uint8_t)255 << (8 - leftoverEnd)) >> (8 - leftoverEnd));
+    *begin |= ~lineCap[7-leftoverStart];
   else
-    *(uint8_t*)(begin + w) &= ((uint8_t)((uint8_t)255 >> leftoverEnd) << leftoverEnd);
+    *begin &= lineCap[7-leftoverStart];
+  w -= 8-leftoverStart;
+  uint8_t secondLast = w/8;
+
+  while(w/8 != 0)
+  {
+    if(color == WHITE)
+      *(uint8_t*)(begin + (w/8)) |= 255;
+    else
+      *(uint8_t*)(begin + (w/8)) &= 0;
+    w -= 8;
+  }
+
+  if(w == 0)
+      return;
+
+  if(color == WHITE)
+    *(uint8_t*)(begin + secondLast + 1) |= lineCap[7-w];
+  else
+    *(uint8_t*)(begin + secondLast + 1) &= ~lineCap[7-w];
 }
 
 void GL::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) 
 {
-#if defined(ESP8266)
-  yield();
-#endif
   int16_t steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep)
    {
