@@ -101,8 +101,7 @@ void GL::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_
         if (size_x == 1 && size_y == 1)
           drawPixel(x + i, y + j, color);
         else
-          fillRect(x + i * size_x, y + j * size_y, size_x, size_y,
-                        color);
+          fillRect(x + i * size_x, y + j * size_y, size_x, size_y, color);
       }
       else if (bg != color)
       {
@@ -148,7 +147,7 @@ void GL::drawFastRawHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
     if(color == WHITE)
       *begin |= (~lineCap[7-leftoverStart] & (lineCap[(7-leftoverStart-w)]));
     else
-      *begin &= (lineCap[7-leftoverStart] | (~lineCap[(7-(leftoverStart-w))]));
+      *begin &= (lineCap[7-leftoverStart] | (~lineCap[(7-leftoverStart-w)]));
     return;
   }
 
