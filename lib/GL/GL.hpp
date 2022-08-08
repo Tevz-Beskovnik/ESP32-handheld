@@ -7,7 +7,9 @@
 
 /*
 TODO:
-    - Add support for rotation of textures
+    - Add support for rotation of textures <----
+    - Implement the fast line drawing alg to as many functions as possible
+    - Blend modes, as in blending two images together
 */
 
 #ifndef _GL_
@@ -49,10 +51,16 @@ TODO:
 #define TEXTURE_BINDING_6 6
 #define TEXTURE_BINDING_7 7
 
+#define CONTEXT_BUFFER 64
+
 #define FONT_SIZE_1 1
 #define FONT_SIZE_2 2
 #define FONT_SIZE_3 3
 #define FONT_SIZE_4 4
+
+#define ROTATE_90 0
+#define ROTATE_180 1
+#define ROTATE_270 2
 
 class GL : public Display
 {
@@ -62,8 +70,10 @@ class GL : public Display
 
     void initGL();
 
-    void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size_x, uint8_t size_y);
+    uint8_t* getContext();
+    uint8_t* changeContext(uint8_t newContext = CONTEXT_BUFFER);
 
+    void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size_x, uint8_t size_y);
     using Print::write;
     virtual size_t write(uint8_t c);
 
@@ -99,34 +109,38 @@ class GL : public Display
     bool loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding = TEXTURE_BINDING_0);
 
     bool loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t textureBinding = TEXTURE_BINDING_0, bool dynmaci = false);
+    bool allocateTexture(uint16_t width, uint16_t height, uint8_t textureBinding = TEXTURE_BINDING_0);
+    bool saveToAllocated(uint8_t* buffer, uint8_t textureBinding = TEXTURE_BINDING_0);
     bool drawTexture(uint16_t x, uint16_t y, uint8_t textureBinding = TEXTURE_BINDING_0);
     void clearTexture(uint8_t textureBinding = TEXTURE_BINDING_0);
 
-    void cropTexture(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBinding = TEXTURE_BINDING_0);
+    void rotateTexture(uint8_t textureBinding = TEXTURE_BINDING_0, uint8_t rotation = ROTATE_90);
+
+    bool cropTexture(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBinding = TEXTURE_BINDING_0);
+    bool cropTextureTo(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBindingFrom = TEXTURE_BINDING_0, uint8_t textureBindingTo = TEXTURE_BINDING_1);
 
     private:
-    // gl stuff
-    uint8_t* context_buffer;
-    uint8_t* texture_buffer;
-    uint16_t _texture_w;
+    
+    uint8_t* texture_buffer; // texture buffer to store tile maps
+    uint16_t _texture_w; // height and width of the texture buffer
     uint16_t _texture_h;
-    uint8_t _tile_w;
+    uint8_t _tile_w; // height and width of a tile in the tile map
     uint8_t _tile_h;
-    uint8_t* tex[8];
-    uint16_t w[8];
-    uint16_t h[8];
-    bool dynamicTex[8];
-    uint16_t _w;
+    uint8_t* tex[MAX_TEX_BINDINGS]; // textures theres 8 here that can be loaded at once; Probably gonna increase that number to like 32 or smtin
+    uint16_t w[MAX_TEX_BINDINGS]; // width and height of the textures
+    uint16_t h[MAX_TEX_BINDINGS];
+    bool dynamicTex[MAX_TEX_BINDINGS]; // when clearing textures we goota know if theyre dynamicly allocated
+    uint16_t _w; // frame buffer width and height
     uint16_t _h;
 
     //font stuff
-    uint8_t _font_size;
-    uint8_t _text_color;
-    uint8_t _text_bg_color;
-    uint16_t _cursor_x;
+    uint8_t _font_size; // font size for scaling
+    uint8_t _text_color; // color of the text to be drawn
+    uint8_t _text_bg_color; // backgorund color of the text if its the same as text color no bakground
+    uint16_t _cursor_x; // x and y positon of the text cursor
     uint16_t _cursor_y;
-    bool wrap;
-    bool _cp437;
+    bool wrap; // text warpping
+    bool _cp437; // ???? idk i stole this
 };
 
 #endif

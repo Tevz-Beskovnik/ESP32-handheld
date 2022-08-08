@@ -39,8 +39,6 @@ typedef void(*GameLoop_t)();
 
 typedef void(*GameFinish_t)();
 
-uint8_t* UITexture;
-
 uint8_t* contextBuffer;
 
 uint8_t numGames = 1;
@@ -108,6 +106,9 @@ void consoleInterfaceSetup()
 
     gl->clearDisplayBuffer();
 
+    gl->allocateTexture(400, 240, TEXTURE_BINDING_1);
+    gl->changeContext(TEXTURE_BINDING_1);
+
     gl->fillRect(0, 0, 400, 240, WHITE);
     gl->fillRectD(4, 4, 390, 230);
     gl->fillRect(9, 9, 380, 220, BLACK);
@@ -138,9 +139,7 @@ void consoleInterfaceSetup()
     gl->textColor(WHITE);
     gl->print("Games:");*/
 
-    memcpy((void*)UITexture, (void*)contextBuffer, screenHeight*screenWidth/8);
-
-    gl->loadTexture(UITexture, screenWidth, screenHeight, TEXTURE_BINDING_1, true);
+    gl->changeContext(CONTEXT_BUFFER);
 }
 
 /**
@@ -229,8 +228,6 @@ void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenW, uint16_
     gl->initGL();
     gl->clearDisplay();
 
-    UITexture = (uint8_t*)malloc(screenW*screenH/8);
-
     screenWidth = screenW;
     screenHeight = screenH;
 
@@ -238,7 +235,7 @@ void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenW, uint16_
     gameLoops[CONSOLE_INTERFACE] = consoleInterface;
     gameFinishes[CONSOLE_INTERFACE] = consoleInterfaceFinish;
 
-    contextBuffer = gl->getDisplayBuffer();
+    contextBuffer = gl->getContext();
 
     gameSetups[CONSOLE_INTERFACE]();
 }

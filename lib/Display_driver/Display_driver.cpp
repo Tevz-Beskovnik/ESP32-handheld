@@ -81,9 +81,9 @@ void Display::clearDisplayBuffer()
 void Display::drawPixel(uint16_t x, uint16_t y, uint8_t color)
 {
     if (color) {
-        display_buffer[(y * width + x) / 8] |= pgm_read_byte(&set[x & 7]);
+        context_buffer[(y * width + x) / 8] |= pgm_read_byte(&set[x & 7]);
     } else {
-        display_buffer[(y * width + x) / 8] &= pgm_read_byte(&clr[x & 7]);
+        context_buffer[(y * width + x) / 8] &= pgm_read_byte(&clr[x & 7]);
     }
 }
 
@@ -135,24 +135,4 @@ void Display::refresh(uint8_t lineNum)
     spi_interface->spiCommand(line, bytes_per_line+4);
     TOGGLE_VCOM
     digitalWrite(csPin, LOW);
-}
-
-/**
- * @brief gets the pointer of the display buffer
- * 
- * @returns pointer to display buffer
-*/
-uint8_t* Display::getDisplayBuffer()
-{
-    return display_buffer;
-}
-
-/**
- * @brief set the display buffer
- * 
- * @param new_display_buffer address of the new display buffer (the old one is NOT freed)
-*/
-void Display::setDisplayBuffer(uint8_t* new_display_buffer)
-{
-    display_buffer = new_display_buffer;
 }

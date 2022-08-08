@@ -18,10 +18,6 @@
   }
 #endif
 
-#ifndef pgm_read_byte
-#define pgm_read_byte(addr) (*(const unsigned char *)(addr))
-#endif
-
 /**
  * @brief Prepares the graphics library class
  * 
@@ -78,9 +74,12 @@ GL::~GL()
 void GL::initGL()
 {
   this->begin();
-  context_buffer = (uint8_t*)getDisplayBuffer();
+  context_buffer = display_buffer;
 }
 
+/**
+ * @brief implementation of function drawChar from print.h to use printf println and print
+*/
 void GL::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size_x, uint8_t size_y) {
   if ((x >= _w) ||              // Clip right
       (y >= _h) ||             // Clip bottom
@@ -118,6 +117,28 @@ void GL::drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_
     else
       fillRect(x + 5 * size_x, y, size_x, 8 * size_y, bg);
   }
+}
+
+/**
+ * @brief get the current active context
+*/
+uint8_t* GL::getContext()
+{
+  return context_buffer;
+}
+
+uint8_t* GL::changeContext(uint8_t newContext)
+{
+  #ifndef UNSAFE_GL
+  if((newContext < 0 || newContext >= MAX_TEX_BINDINGS) && newContext != CONTEXT_BUFFER)
+    return nullptr;
+  #endif
+  
+  if(newContext == CONTEXT_BUFFER)
+    context_buffer = display_buffer;
+  else
+    context_buffer = tex[newContext];
+  return context_buffer;
 }
 
 size_t GL::write(uint8_t c) {
@@ -717,14 +738,50 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
 bool GL::loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t textureBinding, bool dynamic)
 {
   #ifndef UNSAFE_GL
-  if(textureBinding < 0 || textureBinding > 2 || !(textureBinding < MAX_TEX_BINDINGS))
+  if(textureBinding < 0 || textureBinding > MAX_TEX_BINDINGS || !(textureBinding < MAX_TEX_BINDINGS))
     return false;
   #endif
+
+  clearTexture(textureBinding); // clear binding before saving something to it
 
   w[textureBinding] = width;
   h[textureBinding] = height;
   tex[textureBinding] = buffer;
   dynamicTex[textureBinding] = dynamic;
+  return true;
+}
+
+/**
+ * @brief allocate space to texture
+*/
+bool GL::allocateTexture(uint16_t width, uint16_t height, uint8_t textureBinding)
+{
+  #ifndef UNSAFE_GL
+  if(textureBinding <= 0 || textureBinding >= MAX_TEX_BINDINGS || !(textureBinding < MAX_TEX_BINDINGS))
+    return false;
+  #endif
+
+  clearTexture(textureBinding);
+
+  tex[textureBinding] = (uint8_t*)malloc(sizeof(uint8_t) * height * width / 8);
+  memset(tex[textureBinding], 0xFFFFFFFF, height * width / 8);
+  w[textureBinding] = width;
+  h[textureBinding] = height;
+  dynamicTex[textureBinding] = true;
+  return true;
+}
+
+/**
+ * @brief saves texture buffer to allocated texture binding
+*/
+bool GL::saveToAllocated(uint8_t* buffer, uint8_t textureBinding)
+{
+  #ifndef UNSAFE_GL
+  if(textureBinding < 0 || textureBinding >= MAX_TEX_BINDING || tex[textureBinding] == NULL)
+    return false;
+  #endif
+
+  memcpy(tex[textureBinding], buffer, w[textureBinding] * h[textureBinding] / 8);
   return true;
 }
 
@@ -740,7 +797,7 @@ bool GL::loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t t
 bool GL::drawTexture(uint16_t x, uint16_t y, uint8_t textureBinding)
 {
   #ifndef UNSAFE_GL
-  if(textureBinding < 0 || textureBinding > 7 || tex[textureBinding] == NULL)
+  if(textureBinding <= 0 || textureBinding >= MAX_TEX_BINDINGS || tex[textureBinding] == NULL)
     return false;
   if(!(x+w[textureBinding] < _w && x >= 0 && y+h[textureBinding] < _h && y >= 0))
     return false;
@@ -770,4 +827,93 @@ void GL::clearTexture(uint8_t textureBinding)
   w[textureBinding] = 0;
   h[textureBinding] = 0;
   dynamicTex[textureBinding] = false;
+}
+
+#define SLICE(sh, s) (((h[textureBinding]) / 8 - (y) + s) & ((uint8_t)(bit(sh))))
+
+void GL::rotateTexture(uint8_t textureBinding, uint8_t rotation)
+{
+  switch(rotation)
+  {
+    case ROTATE_90:
+    {
+      uint8_t* placeholder = (uint8_t*)malloc(w[textureBinding] * h[textureBinding] / 8);
+      for(uint8_t y = 0; y < h[textureBinding] / 8; y++)
+      {
+        for(uint16_t x = 0; x < w[textureBinding] / 8; x++)
+        {
+          for(uint8_t b = 8; b > 0; b--)
+          {
+            uint8_t rowSlice = SLICE(b-1, 0)|SLICE(b-1, 1)|SLICE(b-1, 2)|SLICE(b-1, 3)|SLICE(b-1, 4)|SLICE(b-1, 5)|SLICE(b-1, 6)|SLICE(b-1, 7);
+          }
+        }
+      }
+      break;
+    }
+    case ROTATE_180:
+    {
+      break;
+    }
+    case ROTATE_270:
+    {
+      break;
+    }
+    default:
+      return;
+  }
+}
+
+/**
+ * @brief crops texture on binding num from x to y to specified height and width aligned to 8 bits :/
+ * 
+ * @param x coordinate to crop from
+ * 
+ * @param y coordinate to crop from
+ * 
+ * @param w width to crap to
+ * 
+ * @param h height to crop to
+ * 
+ * @param textureBinding texture binding to crop
+*/
+bool GL::cropTexture(uint16_t x, uint16_t y, uint16_t wid, uint16_t hei, uint8_t textureBinding)
+{ 
+  #ifndef UNSAFE_GL
+  if(textureBinding < 0 || textureBinding >= MAX_TEX_BINDINGS || tex[textureBinding] == NULL)
+    return false;
+  #endif
+
+  // align x axis to to 8 bit space becouse thats how we role right now :U
+  wid -= ((wid%8) + (wid%8) != 0 ? 8 : 0);
+  x -= x%8;
+
+  uint8_t* newTexture = (uint8_t*)malloc(sizeof(uint8_t) * wid * y / 8);
+
+  for(uint16_t i = y; i < y+hei; i++)
+    memcpy((newTexture + (i-y)*wid/8), (tex[textureBinding] + i*w[textureBinding]/8 + x), wid/8);
+
+  clearTexture(textureBinding);
+  loadTexture(newTexture, wid, hei, textureBinding, true);
+
+  return true;
+}
+
+/**
+ * @brief crops texture on binding num from x to y to specified height and width aligned to 8 bits
+ * 
+ * @param x coordinate to crop from
+ * 
+ * @param y coordinate to crop from
+ * 
+ * @param w width to crap to
+ * 
+ * @param h height to crop to
+ * 
+ * @param textureBindingFrom texture binding to crop
+ * 
+ * @param textureBindingTo
+*/
+bool GL::cropTextureTo(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBindingFrom, uint8_t textureBindingTo)
+{
+
 }

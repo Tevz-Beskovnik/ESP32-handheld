@@ -32,9 +32,9 @@ class Display : public Print {
 
         void refresh(uint8_t line);
 
-        uint8_t* getDisplayBuffer();
-
-        void setDisplayBuffer(uint8_t* new_display_buffer);
+    protected:
+        uint8_t* display_buffer;
+        uint8_t* context_buffer; // context buffer; It's basicly the frame buffer of the screen
 
     private:
         SPIDriver* spi_interface;
@@ -42,8 +42,6 @@ class Display : public Print {
         uint8_t sharpmem_vcom;
 
         uint8_t bytes_per_line;
-
-        uint8_t* display_buffer;
 
         uint8_t csPin;
 

@@ -1,3 +1,9 @@
+/**
+ * @author: Tevž Beškovnik
+ * @date: 23. 7. 2022
+ * @description: Iot stuff, not including screen....
+*/
+
 #ifndef _CONSOLE_IO_
 #define _CONSOLE_IO_
 
