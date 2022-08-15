@@ -18,6 +18,15 @@
   }
 #endif
 
+#define MASK_1_BIT(in_bitmap, left) (((*(uint8_t*)(in_bitmap)) & 1) << (left))
+#define MASK_2_BIT(in_bitmap, left) ((((*(uint8_t*)(in_bitmap)) & 2) >> 1) << (left))
+#define MASK_3_BIT(in_bitmap, left) ((((*(uint8_t*)(in_bitmap)) & 4) >> 2) << (left))
+#define MASK_4_BIT(in_bitmap, left) ((((*(uint8_t*)(in_bitmap)) & 8) >> 3) << (left))
+#define MASK_5_BIT(in_bitmap, left) ((((*(uint8_t*)(in_bitmap)) & 16) >> 4) << (left))
+#define MASK_6_BIT(in_bitmap, left) ((((*(uint8_t*)(in_bitmap)) & 32) >> 5) << (left))
+#define MASK_7_BIT(in_bitmap, left) ((((*(uint8_t*)(in_bitmap)) & 64) >> 6) << (left))
+#define MASK_8_BIT(in_bitmap, left) ((((*(uint8_t*)(in_bitmap)) & 128) >> 7) << (left))
+
 /**
  * @brief Prepares the graphics library class
  * 
@@ -165,36 +174,27 @@ void GL::drawFastRawHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
   uint8_t* begin = context_buffer + (y * (_w / 8) + (x)/8);
   if(8-leftoverStart > w)
   {
-    if(color == WHITE)
-      *begin |= (~lineCap[7-leftoverStart] & (lineCap[(7-leftoverStart-w)]));
-    else
-      *begin &= (lineCap[7-leftoverStart] | (~lineCap[(7-leftoverStart-w)]));
+    if(color == WHITE) *begin |= (~lineCap[7-leftoverStart] & (lineCap[(7-leftoverStart-w)]));
+    else *begin &= (lineCap[7-leftoverStart] | (~lineCap[(7-leftoverStart-w)]));
     return;
   }
 
-  if(color == WHITE)
-    *begin |= ~lineCap[7-leftoverStart];
-  else
-    *begin &= lineCap[7-leftoverStart];
+  if(color == WHITE) *begin |= ~lineCap[7-leftoverStart];
+  else *begin &= lineCap[7-leftoverStart];
   w -= 8-leftoverStart;
   uint8_t secondLast = w/8;
 
   while(w/8 != 0)
   {
-    if(color == WHITE)
-      *(uint8_t*)(begin + (w/8)) |= 255;
-    else
-      *(uint8_t*)(begin + (w/8)) &= 0;
+    if(color == WHITE) *(uint8_t*)(begin + (w/8)) = 255;
+    else *(uint8_t*)(begin + (w/8)) = 0;
     w -= 8;
   }
 
-  if(w == 0)
-      return;
+  if(w == 0) return;
 
-  if(color == WHITE)
-    *(uint8_t*)(begin + secondLast + 1) |= lineCap[7-w];
-  else
-    *(uint8_t*)(begin + secondLast + 1) &= ~lineCap[7-w];
+  if(color == WHITE) *(uint8_t*)(begin + secondLast + 1) |= lineCap[7-w];
+  else *(uint8_t*)(begin + secondLast + 1) &= ~lineCap[7-w];
 }
 
 void GL::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) 
@@ -829,38 +829,89 @@ void GL::clearTexture(uint8_t textureBinding)
   dynamicTex[textureBinding] = false;
 }
 
-#define SLICE(sh, s) (((h[textureBinding]) / 8 - (y) + s) & ((uint8_t)(bit(sh))))
+// texture rotation
+void rotate90deg(const uint8_t* in, uint8_t* out, uint16_t w, uint16_t x, uint16_t y)
+{
+    memset(out, 0, 8);
+    for(uint8_t i = 0; i < 8; i++)
+    {
+        printf("%i, %i, %i\n", w*y, x, w/8*i);
+        *(out) |= MASK_1_BIT((in + w*y + x + w/8*i), i);
+        *(out + 1) |= MASK_2_BIT((in + w*y + x + w/8*i), i);
+        *(out + 2) |= MASK_3_BIT((in + w*y + x + w/8*i), i);
+        *(out + 3) |= MASK_4_BIT((in + w*y + x + w/8*i), i);
+        *(out + 4) |= MASK_5_BIT((in + w*y + x + w/8*i), i);
+        *(out + 5) |= MASK_6_BIT((in + w*y + x + w/8*i), i);
+        *(out + 6) |= MASK_7_BIT((in + w*y + x + w/8*i), i);
+        *(out + 7) |= MASK_8_BIT((in + w*y + x + w/8*i), i);
+    }
+}
+
+void rotateBitmap(uint16_t w, uint16_t h, uint8_t* buffer, uint8_t* out) {
+    memset(out, 0, w*h/8);
+    for(uint8_t i = 0; i < h/8; i++)
+    {
+        for(uint8_t j = 0; j < w/8; j++)
+        {
+            uint8_t* outS = (uint8_t*)malloc(8);
+            memset(outS, 0, 8);
+            rotate90deg(buffer, outS, w, j, i);
+            uint8_t newY = (w/8 - 1 - j);
+            uint8_t newX = i;
+            *(out + newY * w + newX) = outS[0];
+            *(out + newY * w + newX + w/8) = outS[1];
+            *(out + newY * w + newX + 2*(w/8)) = outS[2];
+            *(out + newY * w + newX + 3*(w/8)) = outS[3];
+            *(out + newY * w + newX + 4*(w/8)) = outS[4];
+            *(out + newY * w + newX + 5*(w/8)) = outS[5];
+            *(out + newY * w + newX + 6*(w/8)) = outS[6];
+            *(out + newY * w + newX + 7*(w/8)) = outS[7];
+        }
+    }
+}
 
 void GL::rotateTexture(uint8_t textureBinding, uint8_t rotation)
 {
+  uint8_t* texture = (uint8_t*)malloc(w[textureBinding] * h[textureBinding]);
+  uint8_t* texture1 = (uint8_t*)malloc(w[textureBinding] * h[textureBinding]);
+  uint16_t width = w[textureBinding];
+  uint16_t height = h[textureBinding];
+  
   switch(rotation)
   {
     case ROTATE_90:
     {
-      uint8_t* placeholder = (uint8_t*)malloc(w[textureBinding] * h[textureBinding] / 8);
-      for(uint8_t y = 0; y < h[textureBinding] / 8; y++)
-      {
-        for(uint16_t x = 0; x < w[textureBinding] / 8; x++)
-        {
-          for(uint8_t b = 8; b > 0; b--)
-          {
-            uint8_t rowSlice = SLICE(b-1, 0)|SLICE(b-1, 1)|SLICE(b-1, 2)|SLICE(b-1, 3)|SLICE(b-1, 4)|SLICE(b-1, 5)|SLICE(b-1, 6)|SLICE(b-1, 7);
-          }
-        }
-      }
+      rotateBitmap(width, height, tex[textureBinding], texture);
+      rotateBitmap(width, height, texture, texture1);
+      rotateBitmap(width, height, texture1, texture);
+      clearTexture(textureBinding);
+      loadTexture(texture, width, height, textureBinding, true);
+      free(texture1);
       break;
     }
     case ROTATE_180:
     {
+      rotateBitmap(width, height, tex[textureBinding], texture1);
+      rotateBitmap(width, height, texture1, texture);
+      clearTexture(textureBinding);
+      loadTexture(texture, width, height, textureBinding, true);
+      free(texture1);
       break;
     }
     case ROTATE_270:
     {
+      rotateBitmap(width, height, tex[textureBinding], texture);
+      clearTexture(textureBinding);
+      loadTexture(texture, width, height, textureBinding, true);
+      free(texture1);
       break;
     }
     default:
-      return;
+    free(texture);
+    free(texture1);
+    break;
   }
+  return;
 }
 
 /**
@@ -913,7 +964,24 @@ bool GL::cropTexture(uint16_t x, uint16_t y, uint16_t wid, uint16_t hei, uint8_t
  * 
  * @param textureBindingTo
 */
-bool GL::cropTextureTo(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBindingFrom, uint8_t textureBindingTo)
+bool GL::cropTextureTo(uint16_t x, uint16_t y, uint16_t wid, uint16_t hei, uint8_t textureBindingFrom, uint8_t textureBindingTo)
 {
+  #ifndef UNSAFE_GL
+  if((textureBindingFrom > 0 || textureBindingFrom <= MAX_TEX_BINDINGS || tex[textureBindingFrom] == NULL) && (textureBindingFrom > 0 || textureBindingFrom <= MAX_TEX_BINDINGS))
+    return false;
+  #endif
 
+  // align x axis to to 8 bit space becouse thats how we role right now :U
+  wid -= ((wid%8) + (wid%8) != 0 ? 8 : 0);
+  x -= x%8;
+
+  uint8_t* newTexture = (uint8_t*)malloc(sizeof(uint8_t) * wid * y / 8);
+
+  for(uint16_t i = y; i < y+hei; i++)
+    memcpy((newTexture + (i-y)*wid/8), (tex[textureBindingFrom] + i*w[textureBindingFrom]/8 + x), wid/8);
+
+  clearTexture(textureBindingTo);
+  loadTexture(newTexture, wid, hei, textureBindingTo, true);
+
+  return true;
 }
