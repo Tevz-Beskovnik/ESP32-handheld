@@ -829,7 +829,7 @@ void GL::clearTexture(uint8_t textureBinding)
   dynamicTex[textureBinding] = false;
 }
 
-// texture rotation
+// segment rotation
 void rotate90deg(const uint8_t* in, uint8_t* out, uint16_t w, uint16_t x, uint16_t y)
 {
     memset(out, 0, 8);
@@ -847,6 +847,7 @@ void rotate90deg(const uint8_t* in, uint8_t* out, uint16_t w, uint16_t x, uint16
     }
 }
 
+// texture rotation
 void rotateBitmap(uint16_t w, uint16_t h, uint8_t* buffer, uint8_t* out) {
     memset(out, 0, w*h/8);
     for(uint8_t i = 0; i < h/8; i++)
