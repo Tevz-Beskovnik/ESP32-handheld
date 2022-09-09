@@ -871,6 +871,13 @@ void rotateBitmap(uint16_t w, uint16_t h, uint8_t* buffer, uint8_t* out) {
     }
 }
 
+/**
+ * @brief rotates texture fixed to 90 degrees
+ * 
+ * @param textureBinding at witch the texture you want to rotate is located at
+ * 
+ * @param rotation to with you want to rotate the texture to options are (ROTATE_90, ROTATE_180, ROTATE_270)
+*/
 void GL::rotateTexture(uint8_t textureBinding, uint8_t rotation)
 {
   uint8_t* texture = (uint8_t*)malloc(w[textureBinding] * h[textureBinding]);
@@ -985,4 +992,36 @@ bool GL::cropTextureTo(uint16_t x, uint16_t y, uint16_t wid, uint16_t hei, uint8
   loadTexture(newTexture, wid, hei, textureBindingTo, true);
 
   return true;
+}
+
+/**
+ * @brief blends source texture ontop of destination texture (black pixels get drawn black at x and y coordinates ontop of destination texture)
+ * 
+ * @param x coordinate at witch to blend source texture to destination texture
+ * 
+ * @param y coordinate at witch to blend source texture to destination texture
+ * 
+ * @param bindingSource texture binding at witch to take blend texture from
+ * 
+ * @param bindingDest texture binding to witch source should be blended to
+*/
+bool GL::bledAdd(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest)
+{
+
+}
+
+/**
+ * @brief blends source texture ontop of destination texture (black pixels get drawn white at x and y coordinates ontop of destination texture)
+ * 
+ * @param x coordinate at witch to blend source texture to destination texture
+ * 
+ * @param y coordinate at witch to blend source texture to destination texture
+ * 
+ * @param bindingSource texture binding at witch to take blend texture from
+ * 
+ * @param bindingDest texture binding to witch source should be blended to
+*/
+bool GL::bledSub(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest)
+{
+
 }

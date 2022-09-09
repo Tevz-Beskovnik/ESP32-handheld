@@ -119,6 +119,9 @@ class GL : public Display
     bool cropTexture(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBinding = TEXTURE_BINDING_0);
     bool cropTextureTo(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBindingFrom = TEXTURE_BINDING_0, uint8_t textureBindingTo = TEXTURE_BINDING_1);
 
+    bool bledAdd(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest);
+    bool bledSub(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest);
+
     private:
     
     uint8_t* texture_buffer; // texture buffer to store tile maps
