@@ -714,7 +714,7 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
   h[textureBinding] = _tile_h;
   uint8_t* texture = tex[textureBinding];
   uint16_t pointerPos1 = 0;
-  uint16_t pointerPos2 = (y*((_texture_w/8)*(_tile_h/8)))+(x*(_tile_w/8));
+  uint16_t pointerPos2 = (y*((_texture_w/8)*(_tile_h)))+(x*(_tile_w/8));
 
   for(uint16_t i = 0; i < _tile_h; i++)
   {
@@ -995,23 +995,18 @@ bool GL::cropTextureTo(uint16_t x, uint16_t y, uint16_t wid, uint16_t hei, uint8
 }
 
 /**
- * @brief blends source texture ontop of destination texture (black pixels get drawn black at x and y coordinates ontop of destination texture)
+ * @brief inverts the texutre at texture binding
  * 
- * @param x coordinate at witch to blend source texture to destination texture
- * 
- * @param y coordinate at witch to blend source texture to destination texture
- * 
- * @param bindingSource texture binding at witch to take blend texture from
- * 
- * @param bindingDest texture binding to witch source should be blended to
+ * @param textureBinding texture binding at witch to invert the texture at
 */
-bool GL::bledAdd(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest)
-{
-
+bool GL::invertTexture(uint8_t textureBinding) {
+  for(int i = 0; i < w[textureBinding] * h[textureBinding] / 8; i++) {
+    *(tex[textureBinding] + i) = ~*(tex[textureBinding] + i);
+  }
 }
 
 /**
- * @brief blends source texture ontop of destination texture (black pixels get drawn white at x and y coordinates ontop of destination texture)
+ * @brief blends source texture ontop of destination texture (black pixels get drawn black at x and y coordinates ontop of destination texture, x is aligned to multiples of 8) 
  * 
  * @param x coordinate at witch to blend source texture to destination texture
  * 
@@ -1021,7 +1016,54 @@ bool GL::bledAdd(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingD
  * 
  * @param bindingDest texture binding to witch source should be blended to
 */
-bool GL::bledSub(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest)
+bool GL::blendAdd(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest)
 {
+  #ifndef UNSAFE_GL
+  if((bindingSource > 0 && bindingSource < MAX_TEX_BINDINGS && bindingDest > 0 && bindingDest < MAX_TEX_BINDINGS && x >= 0 && x < _w && y >= 0 && y < _h))
+    return false;
+  #endif
 
+  x-=x%8;
+  uint8_t* startPos = tex[bindingDest] + y * w[bindingDest]/8 + (x/8);
+
+  for(uint16_t i = 0; i < h[bindingSource]; i++) {
+    for(uint8_t j = 0; j < w[bindingSource]/8; j++) {
+      *(startPos + i*(_w/8) + j) &= *(tex[bindingSource] + i*w[bindingSource]/8 + j);
+    }
+  }
+
+  return true;
+}
+
+/**
+ * @brief blends source texture ontop of destination texture (black pixels get drawn white at x and y coordinates ontop of destination texture, x is bound to multiples of 8)
+ * 
+ * @param x coordinate at witch to blend source texture to destination texture
+ * 
+ * @param y coordinate at witch to blend source texture to destination texture
+ * 
+ * @param bindingSource texture binding at witch to take blend texture from
+ * 
+ * @param bindingDest texture binding to witch source should be blended to
+*/
+bool GL::blendSub(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest)
+{
+  #ifndef UNSAFE_GL
+  if((bindingSource > 0 && bindingSource < MAX_TEX_BINDINGS && bindingDest > 0 && bindingDest < MAX_TEX_BINDINGS && x >= 0 && x < _w && y >= 0 && y < _h))
+    return false;
+  #endif
+
+  invertTexture(bindingSource);
+
+  x-=x%8;
+  uint8_t* startPos = tex[bindingDest] + y * w[bindingDest]/8 + (x/8);
+
+  for(uint16_t i = 0; i < h[bindingSource]; i++) {
+    for(uint8_t j = 0; j < w[bindingSource]/8; j++) {
+      *(startPos + i*(_w/8) + j) |= *(tex[bindingSource] + i*w[bindingSource]/8 + j);
+
+    }
+  }
+
+  return true;
 }

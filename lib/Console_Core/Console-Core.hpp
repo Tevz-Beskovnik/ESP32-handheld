@@ -12,9 +12,7 @@ TODO:
     - Think of implementing functions that run when game launch (for setup and stuff)
     - Add external flash (????) - this one is in the air
 */
-
-#ifndef _CONSOLE_
-#define _CONSOLE_
+#pragma once
 
 #include <GL.hpp>
 #include <textures.h>
@@ -121,7 +119,7 @@ void consoleInterfaceSetup()
     gl->textColor(BLACK);
     gl->print("ESP-HANDHEALD");
 
-    /*gl->fillRect(19, 34, 120, 186, WHITE);
+    gl->fillRect(19, 34, 120, 186, WHITE);
     gl->setCursor(28, 40);
     gl->fontSize(2);
     gl->print("Controls:");
@@ -137,7 +135,7 @@ void consoleInterfaceSetup()
 
     gl->setCursor(150, 35);
     gl->textColor(WHITE);
-    gl->print("Games:");*/
+    gl->print("Games:");
 
     gl->changeContext(CONTEXT_BUFFER);
 }
@@ -239,5 +237,3 @@ void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenW, uint16_
 
     gameSetups[CONSOLE_INTERFACE]();
 }
-
-#endif

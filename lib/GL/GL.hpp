@@ -39,7 +39,7 @@ TODO:
 #endif
 
 // maximum amount of possible texture bindings
-#define MAX_TEX_BINDINGS 8
+#define MAX_TEX_BINDINGS 16
 
 // texture bindings
 #define TEXTURE_BINDING_0 0
@@ -50,6 +50,14 @@ TODO:
 #define TEXTURE_BINDING_5 5
 #define TEXTURE_BINDING_6 6
 #define TEXTURE_BINDING_7 7
+#define TEXTURE_BINDING_8 8
+#define TEXTURE_BINDING_9 9
+#define TEXTURE_BINDING_10 10
+#define TEXTURE_BINDING_11 11
+#define TEXTURE_BINDING_12 12
+#define TEXTURE_BINDING_13 13
+#define TEXTURE_BINDING_14 14
+#define TEXTURE_BINDING_15 15
 
 #define CONTEXT_BUFFER 64
 
@@ -119,8 +127,10 @@ class GL : public Display
     bool cropTexture(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBinding = TEXTURE_BINDING_0);
     bool cropTextureTo(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBindingFrom = TEXTURE_BINDING_0, uint8_t textureBindingTo = TEXTURE_BINDING_1);
 
-    bool bledAdd(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest);
-    bool bledSub(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest);
+    bool invertTexture(uint8_t textureBinding);
+
+    bool blendAdd(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest);
+    bool blendSub(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest);
 
     private:
     
