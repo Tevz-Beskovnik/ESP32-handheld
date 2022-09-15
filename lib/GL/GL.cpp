@@ -727,6 +727,35 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
 }
 
 /**
+ * @brief loads a tile from tilemap into a texture binding
+ * 
+ * @param x the x position of the tile in map (coordinates increment per texture not pixel)
+ * 
+ * @param y the y position of the tile in map (coordinates increment per texture not pixel)
+ * 
+ * @param textureBinding the texture binding that the texture shouold be bound to (default is TEXTURE_BINDING_0)
+*/
+bool GL::drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y, uint8_t textureBinding = TEXTURE_BINDING_0)
+{
+  #ifndef UNSAFE_GL
+  if((x > (_texture_w/_hnbtile_w-1)) || (y > (_texture_h/_tile_h-1)) || texture_buffer == NULL || !(textureBinding < MAX_TEX_BINDINGS))
+    return false;
+  #endif
+
+  uint16_t pointerPos1 = y*_w/8 + (x/8);
+  uint16_t pointerPos2 = (tex_y*((_texture_w/8)*(_tile_h)))+(tex_x*(_tile_w/8));
+
+  for(uint16_t i = 0; i < _tile_h; i++)
+  {
+    memcpy((void*)(((uint8_t*)context_buffer)+pointerPos1), (void*)(((uint8_t*)texture_buffer)+pointerPos2), _tile_w/8);
+    pointerPos1 += (_w/8);
+    pointerPos2 += (_texture_w/8);
+  }
+
+  return true;
+}
+
+/**
  * @brief loads a texture from buffer into texture binding
  * 
  * @param buffer buffer containing texture
