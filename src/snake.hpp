@@ -2,7 +2,6 @@
 
 #include <GL.hpp>
 #include <Console-IO.hpp>
-#include <sys/random.h>
 
 uint8_t sprites[128] = {0b00111111, 0b11111100, 0b10111111, 0b11110011, 0b00000111, 0b11100000, 0b01111111, 0b11101101, 0b00000001, 0b10000000, 0b01111111, 0b11101110, 0b00000001, 0b10000000, 0b00001111, 0b11110001, 0b00000000, 0b00000000, 0b00000011, 0b11000000, 0b00000000, 0b00000000, 0b00000001, 0b10001100, 0b01110000, 0b00001110, 0b00000000, 0b00010000, 0b00110000, 0b00001100, 0b00000000, 0b00100000, 0b00000000, 0b00000000, 0b00000000, 0b00100000, 0b00000010, 0b01000000, 0b00000000, 0b00000000, 0b00001100, 0b00110000, 0b00000000, 0b00000000, 0b11110000, 0b00001111, 0b00000001, 0b10000000, 0b00000010, 0b01000000, 0b00000001, 0b10000000, 0b00001100, 0b00110000, 0b00000011, 0b11000000, 0b11110000, 0b00001111, 0b00000111, 0b11100000, 0b00000000, 0b00000000, 0b10011111, 0b11111001, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000010, 0b01000000, 0b00000000, 0b00000000, 0b00001100, 0b00110000, 0b00000000, 0b00000000, 0b11110001, 0b10001111, 0b00000000, 0b00000000, 0b00000001, 0b10000000, 0b00000000, 0b00000000, 0b00001001, 0b10010000, 0b00000000, 0b00000000, 0b00110001, 0b10001100, 0b00000000, 0b00000000, 0b11000011, 0b11000011, 0b00000000, 0b00000000, 0b00000011, 0b11000000, 0b00000000, 0b00000000, 0b00010111, 0b11101000, 0b00000000, 0b00000000, 0b01100111, 0b11100110, 0b00000000, 0b00000000, 0b10001111, 0b11110001, 0b00000000, 0b00000000, 0b00001111, 0b11110000, 0b00000000, 0b00000000, 0b10011111, 0b11111001, 0b00000000, 0b00000000, 0b00111111, 0b11111100, 0b00000000, 0b00000000, 0b01111111, 0b11111110 };
 
@@ -26,10 +25,12 @@ struct vec2 {
 vec2 apple;
 vec2 snake[FIELD_H * FIELD_W];
 uint16_t snake_length = 3;
-bool gameOver = false;
+bool game_over = false;
 
 int8_t travel_dir_v = 0; // vertical and horizontal travel directions
 int8_t travel_dir_h = 0;
+
+uint32_t refresh_counter = 0;
 
 
 void snakeSetup(GL* gfx) 
@@ -65,10 +66,10 @@ void snakeFinish(GL* gfx)
 }
 
 bool checkCollisions() {
-    if(snake[0].x + travel_dir_h > 0 && snake[0].x + travel_dir_h <= 0 || snake[0].y + travel_dir_v > 0 && snake[0].y + travel_dir_v <= 0) return true;
+    if(((int)(snake[0].x + travel_dir_h) < 0 || (int)(snake[0].x + travel_dir_h) > FIELD_W-1) || ((int)(snake[0].y + travel_dir_v) < 0 || (int)(snake[0].y + travel_dir_v) > FIELD_H-1)) return true;
 
     for(uint16_t i = 1; i < snake_length; i++){
-        if(snake[0].x + travel_dir_h == snake[i].x || snake[0].y + travel_dir_v == snake[i].y) return true;
+        if(snake[0].x + travel_dir_h == snake[i].x && snake[0].y + travel_dir_v == snake[i].y) return true;
     }
 
     return false;
@@ -76,47 +77,60 @@ bool checkCollisions() {
 
 void snakeLoop(GL* gfx) 
 {
-    if(gameOver) return;
-    uint8_t travel_v = (isPressedSticky(BUTTON_UP_ID) * UP) + (isPressedSticky(BUTTON_DOWN_ID) * DOWN);
-    uint8_t travel_h = (isPressedSticky(BUTTON_LEFT_ID) * LEFT) + (isPressedSticky(BUTTON_RIGHT_ID) * RIGHT);
-    if(travel_v != 0)
-    {
-        travel_dir_v = travel_v;
+    if(game_over) return;
+    if(isPressed(BUTTON_DOWN_ID) && travel_dir_v != UP){
+        travel_dir_v = DOWN;
         travel_dir_h = 0;
-    } else if(travel_h != 0) {
-        travel_dir_h = travel_h;
+    }
+    if(isPressed(BUTTON_UP_ID) && travel_dir_v != DOWN){
+        travel_dir_v = UP;
+        travel_dir_h = 0;
+    }
+    if(isPressed(BUTTON_LEFT_ID) && travel_dir_h != RIGHT){
         travel_dir_v = 0;
+        travel_dir_h = LEFT;
+    }
+    if(isPressed(BUTTON_RIGHT_ID) && travel_dir_h != LEFT){
+        travel_dir_v = 0;
+        travel_dir_h = RIGHT;
     }
 
-    gfx->clearDisplayBuffer();
+    if(refresh_counter == 15000) {
+        refresh_counter = 0;
+        gfx->clearDisplayBuffer();
 
-    gfx->fillRect(0, 0, 400, 16, BLACK); // draw black borders
-    gfx->fillRect(0, 16, 16, 208, BLACK);
-    gfx->fillRect(384, 16, 16, 208, BLACK);
-    gfx->fillRect(0, 224, 400, 16, BLACK);
-    gfx->printf("Score: %d", snake_length-3);
+        gfx->fillRect(0, 0, 400, 16, BLACK); // draw black borders
+        gfx->fillRect(0, 16, 16, 208, BLACK);
+        gfx->fillRect(384, 16, 16, 208, BLACK);
+        gfx->fillRect(0, 224, 400, 16, BLACK);
+        gfx->setCursor(16, 0);
+        gfx->textColor(WHITE);
+        gfx->printf("Score: %d", snake_length-3);
 
-    gfx->drawTileFromMap(16 + apple.x*16, 16 + apple.y * 16, 1, 0);
+        gfx->drawTileFromMap(16 + apple.x*16, 16 + apple.y * 16, 1, 0);
 
-    for(uint16_t i = snake_length-1; i > 0; i--)
-    {
-        gfx->drawTileFromMap(16 + snake[i].x*16, 16 + snake[i].y*16, 0, 1);
-        snake[i].x = snake[i-1].x;
-        snake[i].y = snake[i-1].y;
+        for(uint16_t i = snake_length-1; i > 0; i--)
+        {
+            gfx->drawTileFromMap(16 + snake[i].x*16, 16 + snake[i].y*16, 0, 1);
+            if(travel_dir_h != 0 || travel_dir_v != 0) {
+                snake[i].x = snake[i-1].x;
+                snake[i].y = snake[i-1].y;
+            }
+        }
+
+        if(snake[0].x == apple.x && snake[0].y == apple.y) 
+        {
+            pickupApple();
+            snake_length++;
+        }
+
+        game_over = checkCollisions();
+
+        gfx->drawTexture(16 + snake[0].x*16, 16 + snake[0].y*16, TEXTURE_BINDING_0);
+        snake[0].x += travel_dir_h;
+        snake[0].y += travel_dir_v;
+
+        gfx->refresh();
     }
-
-    if(snake[0].x == apple.x && snake[0].y == apple.y) 
-    {
-        pickupApple();
-        snake_length++;
-    }
-
-    gfx->drawTexture(16 + snake[0].x*16, 16 + snake[0].y*16, TEXTURE_BINDING_0);
-    snake[0].x += travel_dir_h;
-    snake[0].y += travel_dir_v;
-
-    gameOver = checkCollisions();
-
-    
-    gfx->refresh();
+    refresh_counter++;
 }

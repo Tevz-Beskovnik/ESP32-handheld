@@ -3,6 +3,7 @@
 #include <Console-Core.hpp>
 #include <game1.hpp>
 #include <game2.hpp>
+#include <snake.hpp>
 
 #define SHARP_CLK  25
 #define SHARP_DI 26
@@ -18,6 +19,7 @@ void setup(void)
   Serial.println("Hello!");
   registerGame(gameSetup1, gameLoop1, gameFinish1,  "Test game 1");
   registerGame(gameSetup2, gameLoop2, gameFinish2, "Some maze");
+  registerGame(snakeSetup, snakeLoop, snakeFinish, "Snake");
 
   setupConsole(SHARP_CLK, SHARP_DI, SHARP_CS, 400, 240);
 
