@@ -735,7 +735,7 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
  * 
  * @param textureBinding the texture binding that the texture shouold be bound to (default is TEXTURE_BINDING_0)
 */
-bool GL::drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y, uint8_t textureBinding = TEXTURE_BINDING_0)
+bool GL::drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y, uint8_t textureBinding)
 {
   #ifndef UNSAFE_GL
   if((x > (_texture_w/_hnbtile_w-1)) || (y > (_texture_h/_tile_h-1)) || texture_buffer == NULL || !(textureBinding < MAX_TEX_BINDINGS))
@@ -1028,7 +1028,7 @@ bool GL::cropTextureTo(uint16_t x, uint16_t y, uint16_t wid, uint16_t hei, uint8
  * 
  * @param textureBinding texture binding at witch to invert the texture at
 */
-bool GL::invertTexture(uint8_t textureBinding) {
+void GL::invertTexture(uint8_t textureBinding) {
   for(int i = 0; i < w[textureBinding] * h[textureBinding] / 8; i++) {
     *(tex[textureBinding] + i) = ~*(tex[textureBinding] + i);
   }

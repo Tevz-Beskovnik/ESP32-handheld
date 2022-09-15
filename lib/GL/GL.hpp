@@ -128,7 +128,7 @@ class GL : public Display
     bool cropTexture(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBinding = TEXTURE_BINDING_0);
     bool cropTextureTo(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint8_t textureBindingFrom = TEXTURE_BINDING_0, uint8_t textureBindingTo = TEXTURE_BINDING_1);
 
-    bool invertTexture(uint8_t textureBinding);
+    void invertTexture(uint8_t textureBinding);
 
     bool blendAdd(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest);
     bool blendSub(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t bindingDest);
