@@ -1,6 +1,6 @@
 {
     "files.associations": {
-        "*.h": "c",
+        "*.h": "cpp",
         "*.css": "css",
         "cstring": "c"
     }
