@@ -115,7 +115,7 @@ class GL : public Display
 
     bool loadTileMap(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t tile_w, uint8_t tile_h);
     bool loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding = TEXTURE_BINDING_0);
-    bool drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y, uint8_t textureBinding = TEXTURE_BINDING_0);
+    bool drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y);
 
     bool loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t textureBinding = TEXTURE_BINDING_0, bool dynmaci = false);
     bool allocateTexture(uint16_t width, uint16_t height, uint8_t textureBinding = TEXTURE_BINDING_0);

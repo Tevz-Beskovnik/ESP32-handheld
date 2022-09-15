@@ -25,17 +25,17 @@ TODO:
 #define GAME_3 3
 #define GAME_4 4
 
-typedef void(*GameSetups_t[5])();
+typedef void(*GameSetups_t[5])(GL* gfx);
 
-typedef void(*GameLoops_t[5])();
+typedef void(*GameLoops_t[5])(GL* gfx);
 
-typedef void(*GameFinishs_t[5])();
+typedef void(*GameFinishs_t[5])(GL* gfx);
 
-typedef void(*GameSetup_t)();
+typedef void(*GameSetup_t)(GL* gfx);
 
-typedef void(*GameLoop_t)();
+typedef void(*GameLoop_t)(GL* gfx);
 
-typedef void(*GameFinish_t)();
+typedef void(*GameFinish_t)(GL* gfx);
 
 uint8_t* contextBuffer;
 
@@ -98,7 +98,7 @@ void registerGame(GameSetup_t gameSetup, GameLoop_t game, GameFinish_t gameFinis
 /**
  * @brief does setup for the console interface
 */
-void consoleInterfaceSetup()
+void consoleInterfaceSetup(GL* gfx)
 {
     gl->loadTexture(controlsSprite, 96, 96, TEXTURE_BINDING_0);
 
@@ -143,7 +143,7 @@ void consoleInterfaceSetup()
 /**
  * @brief finish function for the console interface
 */
-void consoleInterfaceFinish()
+void consoleInterfaceFinish(GL* gfx)
 {
     gl->clearTexture(TEXTURE_BINDING_0);
     gl->clearTexture(TEXTURE_BINDING_1);
@@ -167,17 +167,17 @@ void gameButton(uint8_t color, const char* text, uint8_t i)
 */
 void launchGame(uint8_t gameId)
 {
-    gameFinishes[activeGame]();
+    gameFinishes[activeGame](gl);
 
     activeGame = gameId;
 
-    gameSetups[activeGame]();
+    gameSetups[activeGame](gl);
 }
 
 /**
  * @brief logic of the game console should run every loop
 */
-void consoleInterface()
+void consoleInterface(GL* gfx)
 {
     gl->clearDisplayBuffer();
 
@@ -208,14 +208,14 @@ void consoleInterface()
 void exitGame() {
     activeGame = CONSOLE_INTERFACE;
 
-    gameSetups[activeGame]();
+    gameSetups[activeGame](gl);
 }
 
 /**
  * @brief function that should run every loop
 */
 void consoleLoop() {
-    gameLoops[activeGame]();
+    gameLoops[activeGame](gl);
 }
 
 void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenW, uint16_t screenH)
@@ -235,5 +235,5 @@ void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenW, uint16_
 
     contextBuffer = gl->getContext();
 
-    gameSetups[CONSOLE_INTERFACE]();
+    gameSetups[CONSOLE_INTERFACE](gl);
 }

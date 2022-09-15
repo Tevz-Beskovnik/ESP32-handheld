@@ -712,6 +712,7 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
   tex[textureBinding] = (uint8_t*)malloc((_tile_h*_tile_w)/8);
   w[textureBinding] = _tile_w;
   h[textureBinding] = _tile_h;
+  dynamicTex[textureBinding] = true;
   uint8_t* texture = tex[textureBinding];
   uint16_t pointerPos1 = 0;
   uint16_t pointerPos2 = (y*((_texture_w/8)*(_tile_h)))+(x*(_tile_w/8));
@@ -735,7 +736,7 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
  * 
  * @param textureBinding the texture binding that the texture shouold be bound to (default is TEXTURE_BINDING_0)
 */
-bool GL::drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y, uint8_t textureBinding)
+bool GL::drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y)
 {
   #ifndef UNSAFE_GL
   if((x > (_texture_w/_hnbtile_w-1)) || (y > (_texture_h/_tile_h-1)) || texture_buffer == NULL || !(textureBinding < MAX_TEX_BINDINGS))
