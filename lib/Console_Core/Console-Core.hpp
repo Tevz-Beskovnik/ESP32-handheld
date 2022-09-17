@@ -206,6 +206,8 @@ void consoleInterface(GL* gfx)
  * @brief exits current game
 */
 void exitGame() {
+    gameFinishes[activeGame](gl);
+
     activeGame = CONSOLE_INTERFACE;
 
     gameSetups[activeGame](gl);

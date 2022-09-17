@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GL.hpp>
+#include <Console-Core.hpp>
 #include <Console-IO.hpp>
 
 uint8_t sprites[128] = {0b00111111, 0b11111100, 0b10111111, 0b11110011, 0b00000111, 0b11100000, 0b01111111, 0b11101101, 0b00000001, 0b10000000, 0b01111111, 0b11101110, 0b00000001, 0b10000000, 0b00001111, 0b11110001, 0b00000000, 0b00000000, 0b00000011, 0b11000000, 0b00000000, 0b00000000, 0b00000001, 0b10001100, 0b01110000, 0b00001110, 0b00000000, 0b00010000, 0b00110000, 0b00001100, 0b00000000, 0b00100000, 0b00000000, 0b00000000, 0b00000000, 0b00100000, 0b00000010, 0b01000000, 0b00000000, 0b00000000, 0b00001100, 0b00110000, 0b00000000, 0b00000000, 0b11110000, 0b00001111, 0b00000001, 0b10000000, 0b00000010, 0b01000000, 0b00000001, 0b10000000, 0b00001100, 0b00110000, 0b00000011, 0b11000000, 0b11110000, 0b00001111, 0b00000111, 0b11100000, 0b00000000, 0b00000000, 0b10011111, 0b11111001, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000010, 0b01000000, 0b00000000, 0b00000000, 0b00001100, 0b00110000, 0b00000000, 0b00000000, 0b11110001, 0b10001111, 0b00000000, 0b00000000, 0b00000001, 0b10000000, 0b00000000, 0b00000000, 0b00001001, 0b10010000, 0b00000000, 0b00000000, 0b00110001, 0b10001100, 0b00000000, 0b00000000, 0b11000011, 0b11000011, 0b00000000, 0b00000000, 0b00000011, 0b11000000, 0b00000000, 0b00000000, 0b00010111, 0b11101000, 0b00000000, 0b00000000, 0b01100111, 0b11100110, 0b00000000, 0b00000000, 0b10001111, 0b11110001, 0b00000000, 0b00000000, 0b00001111, 0b11110000, 0b00000000, 0b00000000, 0b10011111, 0b11111001, 0b00000000, 0b00000000, 0b00111111, 0b11111100, 0b00000000, 0b00000000, 0b01111111, 0b11111110 };
@@ -30,14 +31,20 @@ bool game_over = false;
 int8_t travel_dir_v = 0; // vertical and horizontal travel directions
 int8_t travel_dir_h = 0;
 
+uint8_t head_rotation = TEXTURE_BINDING_0;
+
 uint32_t refresh_counter = 0;
 
-
-void snakeSetup(GL* gfx) 
+void snakeSetup(GL* gfx)
 {
     gfx->loadTileMap(sprites, 32, 32, 16, 16); // load tile map
-    gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_0); // save the snake head and tale to textures becouse they will be rotated
-    gfx->loadTileFromMap(1, 1, TEXTURE_BINDING_1);
+    gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_0); // save the snake head to textures becouse they will be rotated
+    gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_1);
+    gfx->rotateTexture(TEXTURE_BINDING_1, ROTATE_90);
+    gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_2);
+    gfx->rotateTexture(TEXTURE_BINDING_2, ROTATE_180);
+    gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_3);
+    gfx->rotateTexture(TEXTURE_BINDING_3, ROTATE_270);
 
     apple.x = (uint16_t)(esp_random()%23);
     apple.y = (uint16_t)(esp_random()%13);
@@ -62,12 +69,20 @@ void pickupApple() // call this when the apple gets pickeup
 void snakeFinish(GL* gfx) 
 { // more or less a clean function
     gfx->clearTexture(TEXTURE_BINDING_0);
-    gfx->clearTexture(TEXTURE_BINDING_1);
+
+    game_over = false;
+    snake_length = 3;
+    travel_dir_h = 0;
+    travel_dir_v = 0;
+    refresh_counter = 0;
 }
 
+// check if the snake is touching the perimiter of is bumping into itself
 bool checkCollisions() {
+    // this is cheking the snakes head if its touching the perimiter
     if(((int)(snake[0].x + travel_dir_h) < 0 || (int)(snake[0].x + travel_dir_h) > FIELD_W-1) || ((int)(snake[0].y + travel_dir_v) < 0 || (int)(snake[0].y + travel_dir_v) > FIELD_H-1)) return true;
 
+    // this is checking if the snake is touching itself anywhere
     for(uint16_t i = 1; i < snake_length; i++){
         if(snake[0].x + travel_dir_h == snake[i].x && snake[0].y + travel_dir_v == snake[i].y) return true;
     }
@@ -77,23 +92,29 @@ bool checkCollisions() {
 
 void snakeLoop(GL* gfx) 
 {
-    if(game_over) return;
+    if(game_over) exitGame();
     if(isPressed(BUTTON_DOWN_ID) && travel_dir_v != UP){
+        head_rotation = TEXTURE_BINDING_2;
         travel_dir_v = DOWN;
         travel_dir_h = 0;
     }
     if(isPressed(BUTTON_UP_ID) && travel_dir_v != DOWN){
+        head_rotation = TEXTURE_BINDING_0;
         travel_dir_v = UP;
         travel_dir_h = 0;
     }
     if(isPressed(BUTTON_LEFT_ID) && travel_dir_h != RIGHT){
+        head_rotation = TEXTURE_BINDING_1;
         travel_dir_v = 0;
         travel_dir_h = LEFT;
     }
     if(isPressed(BUTTON_RIGHT_ID) && travel_dir_h != LEFT){
+        head_rotation = TEXTURE_BINDING_3;
         travel_dir_v = 0;
         travel_dir_h = RIGHT;
     }
+
+
 
     if(refresh_counter == 15000) {
         refresh_counter = 0;
@@ -126,7 +147,7 @@ void snakeLoop(GL* gfx)
 
         game_over = checkCollisions();
 
-        gfx->drawTexture(16 + snake[0].x*16, 16 + snake[0].y*16, TEXTURE_BINDING_0);
+        gfx->drawTexture(16 + snake[0].x*16, 16 + snake[0].y*16, head_rotation);
         snake[0].x += travel_dir_h;
         snake[0].y += travel_dir_v;
 
