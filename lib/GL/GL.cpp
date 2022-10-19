@@ -881,7 +881,7 @@ void rotate90deg(const uint8_t* in, uint8_t* out, uint16_t w, uint16_t x, uint16
   TODO: 
     - rotation doesnt work
     - look at how textures order bit chunks in game1.hpp
-    - fix: rotate the chunks in correct order then rotate them
+    - fix: organise the chunks in correct order then rotate them
       and store them in the reverse order again like in game1.hpp's texture
 */
 // texture rotation

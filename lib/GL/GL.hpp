@@ -2,14 +2,13 @@
  * @author: Tevž Beškovnik
  * @date: 14. 7. 2022
  * @description: graphics library with basic render functions extends on the Adafruit-GFX
- * credit for all other functions goes to them
+ * credit for a lot of these functions goes to them
 */
 
 /*
 TODO:
-    - Add support for rotation of textures <----
-    - Implement the fast line drawing alg to as many functions as possible
-    - Blend modes, as in blending two images together
+    - Implement the fast line drawing alg to as many functions as possible <--- (NEXT TO DO)
+    - Fix texture rotation
 */
 
 #ifndef _GL_
