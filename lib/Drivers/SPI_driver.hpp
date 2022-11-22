@@ -7,11 +7,13 @@
 
 class SPIDriver {
     public:
-        SPIDriver(uint8_t pinClk, uint8_t pinMosi, uint8_t pinCs, uint8_t pBitOrder, uint32_t clock);
+        SPIDriver(uint8_t pinClk, uint8_t pinMosi, uint8_t pinMiso, uint8_t pinCs, uint8_t pBitOrder, uint32_t clock);
 
         ~SPIDriver();
 
         void spiCommand(uint8_t* dataBuffer, uint32_t len);
+
+        SPIClass* getInterface();
 
     private:
         SPIClass* spi;

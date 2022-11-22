@@ -32,7 +32,7 @@ static const uint8_t PROGMEM set[] = {1, 2, 4, 8, 16, 32, 64, 128},
  * @param screen_height display height
 */
 Display::Display(uint8_t cs, uint8_t clk, uint8_t mosi, uint32_t freq, uint16_t screen_width, uint16_t screen_height)
-    : spi_interface(new SPIDriver(clk, mosi, cs, SPI_LSBFIRST, freq)), sharpmem_vcom(SHARPMEM_CMD_VCOM), height(screen_height), width(screen_width), csPin(cs), bytes_per_line(screen_width/8)
+    : spi_interface(new SPIDriver(clk, mosi, -1, cs, SPI_LSBFIRST, freq)), sharpmem_vcom(SHARPMEM_CMD_VCOM), height(screen_height), width(screen_width), csPin(cs), bytes_per_line(screen_width/8)
 {
 }
 

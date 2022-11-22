@@ -42,7 +42,6 @@ void gameFinish2(GL* gfx)
 
 void gameSetup2(GL* gfx) 
 {
-  Serial.println("Hello Amerika!");
   gfx->loadTileMap(tilemap2, 48, 48, 16, 16);
   gfx->loadTileFromMap(2, 0, TEXTURE_BINDING_0);
   gfx->loadTileFromMap(1, 0, TEXTURE_BINDING_1);

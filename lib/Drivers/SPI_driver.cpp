@@ -13,10 +13,10 @@
  * 
  * @param clock frequency 
 */
-SPIDriver::SPIDriver(uint8_t pinClk, uint8_t pinMosi, uint8_t pinCs, uint8_t pBitOrder, uint32_t clock)
+SPIDriver::SPIDriver(uint8_t pinClk, uint8_t pinMosi, uint8_t pinMiso, uint8_t pinCs, uint8_t pBitOrder, uint32_t clock)
 : spi(new SPIClass()), settings(new SPISettings(clock, pBitOrder, SPI_MODE0))
 {
-    spi->begin(pinClk, -1, pinMosi, pinCs);
+    spi->begin(pinClk, pinMiso, pinMosi, pinCs);
 
     pinMode(pinCs, OUTPUT);
 }
@@ -35,4 +35,9 @@ void SPIDriver::spiCommand(uint8_t* dataBuffer, uint32_t len)
     spi->beginTransaction(*settings);
     spi->transfer(dataBuffer, len);
     spi->endTransaction();
+}
+
+SPIClass* SPIDriver::getInterface()
+{
+    return spi;
 }

@@ -76,12 +76,13 @@ uint16_t x = 200, y = 0;
 
 void gameFinish1(GL* gfx)
 {
+  #ifdef DEBUG
   Serial.println("end");
+  #endif
 }
 
 void gameSetup1(GL* gfx) 
 {
-  Serial.println("Hello Amerika!");
   gfx->loadTileMap(tileMap, 64, 64, 32, 32);
   gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_0);
   gfx->loadTileFromMap(1, 0, TEXTURE_BINDING_1);
