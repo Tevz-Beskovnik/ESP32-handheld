@@ -66,7 +66,7 @@ void WiFi_driver::config(connection_settings_t* settings)
     if(!WiFi.config(s_config->local_ip, s_config->gateway, s_config->subnet, dns, dns2))
     {
         #ifdef DEBUG
-        Serial.println("WiFi mode invalid!");
+        Serial.println("Cannot configure IP settings!");
         #endif
         delay(1000);
         ESP.restart();
