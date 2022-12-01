@@ -20,7 +20,7 @@
 
 class SPIDriver {
     public:
-        SPIDriver(uint8_t pinClk, uint8_t pinMosi, uint8_t pinMiso);
+        SPIDriver(uint8_t pinClk, int pinMosi, int pinMiso);
 
         /*~SPIDriver();
 
@@ -41,7 +41,7 @@ class SPIDriver {
 // new spi devcie class
 class SPIDevice {
     public:
-        SPIDevice(uint8_t pBitOrder, int32_t clock);
+        SPIDevice(uint8_t flags, int32_t clock);
 
         void spiCommand(uint8_t* dataBuffer, uint32_t len);
 
@@ -53,7 +53,7 @@ class SPIDevice {
         // device config
         spi_device_interface_config_t dev_cfg;
         // device handle
-        spi_device_handle_t* dev_handle;
+        spi_device_handle_t dev_handle;
         // transaction data
         spi_transaction_t dev_transaction;
 };

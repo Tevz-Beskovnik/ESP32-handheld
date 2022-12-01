@@ -17,7 +17,7 @@
  * 
  * @param clock frequency 
 */
-SPIDriver::SPIDriver(uint8_t pinClk, uint8_t pinMosi, uint8_t pinMiso)
+SPIDriver::SPIDriver(uint8_t pinClk, int pinMosi, int pinMiso)
 //: spi(new SPIClass()), settings(new SPISettings(clock, pBitOrder, SPI_MODE0))
 {
     // new spi driver
@@ -41,6 +41,7 @@ SPIDriver::SPIDriver(uint8_t pinClk, uint8_t pinMosi, uint8_t pinMiso)
     bus_cfg = cfg;
 
     err = spi_bus_initialize(VSPI_HOST, &bus_cfg, 0);
+    Serial.printf("Value of err = %d", err);
     assert(err == ESP_OK);
     
     // old spi driver
@@ -53,9 +54,11 @@ SPIDriver::SPIDriver(uint8_t pinClk, uint8_t pinMosi, uint8_t pinMiso)
 /**
  * @description: initialize the SPI device
  * 
+ * @param flags flags to add to the device configuration
  * 
+ * @param clock clock speed at with the device operates
 */
-SPIDevice::SPIDevice(uint8_t pBitOrder, int32_t clock)
+SPIDevice::SPIDevice(uint8_t flags, int32_t clock)
 {
     esp_err_t err;
 
@@ -63,15 +66,15 @@ SPIDevice::SPIDevice(uint8_t pBitOrder, int32_t clock)
         .mode = 0,
         .clock_speed_hz = (int)clock,
         .spics_io_num = -1,
-        .flags = 0,
+        .flags = flags,
         .queue_size = 1,
         .pre_cb = nullptr,
     };
 
     dev_cfg = cfg;
 
-    err = spi_bus_add_device(VSPI_HOST, &dev_cfg, dev_handle);
-    assert(err = ESP_OK);
+    err = spi_bus_add_device(VSPI_HOST, &dev_cfg, &dev_handle);
+    assert(err == ESP_OK);
 }
 
 /**
@@ -92,7 +95,7 @@ void SPIDevice::spiCommand(uint8_t* dataBuffer, uint32_t len)
 
     dev_transaction = transaction;
 
-    spi_device_transmit(*dev_handle, &dev_transaction);
+    spi_device_transmit(dev_handle, &dev_transaction);
 }
 
 /**
@@ -118,7 +121,7 @@ void SPIDevice::spiCommand(uint8_t* outBuffer, uint32_t outLen, uint8_t* inBuffe
 
     dev_transaction = transaction;
 
-    spi_device_transmit(*dev_handle, &dev_transaction);
+    spi_device_transmit(dev_handle, &dev_transaction);
 }
 
 /**
@@ -126,5 +129,5 @@ void SPIDevice::spiCommand(uint8_t* outBuffer, uint32_t outLen, uint8_t* inBuffe
 */
 void SPIDevice::spiCommand()
 {
-    spi_device_transmit(*dev_handle, &dev_transaction);
+    spi_device_transmit(dev_handle, &dev_transaction);
 }

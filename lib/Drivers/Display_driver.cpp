@@ -32,7 +32,7 @@ static const uint8_t PROGMEM set[] = {1, 2, 4, 8, 16, 32, 64, 128},
  * @param screen_height display height
 */
 Display::Display(uint8_t cs, uint32_t freq, uint16_t screen_width, uint16_t screen_height)
-    : device(new SPIDevice(SPI_LSBFIRST, freq)), sharpmem_vcom(SHARPMEM_CMD_VCOM), height(screen_height), width(screen_width), csPin(cs), bytes_per_line(screen_width/8)
+    : device(new SPIDevice(SPI_DEVICE_BIT_LSBFIRST, freq)), sharpmem_vcom(SHARPMEM_CMD_VCOM), height(screen_height), width(screen_width), csPin(cs), bytes_per_line(screen_width/8)
 {
 }
 
