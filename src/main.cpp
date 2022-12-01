@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <WiFi.h>
 #include <Arduino.h>
 #include <Console-Core.hpp>
 #include <game1.hpp>
