@@ -1,3 +1,4 @@
+#include <Wire.h>
 #include <WiFi.h>
 
 struct connection_info_t {

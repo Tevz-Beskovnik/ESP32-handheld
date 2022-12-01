@@ -123,6 +123,8 @@ connection_strength_t WiFi_driver::strength()
         return CONNECTION_LOW;
     else if(strength <= -90)
         return CONNECTION_VERY_LOW;
+    else
+        return NO_CONNECTION;
 }
 
 void WiFi_driver::status()

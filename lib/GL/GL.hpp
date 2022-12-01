@@ -72,7 +72,7 @@ TODO:
 class GL : public Display
 {
     public:
-    GL(uint8_t clk, uint8_t mosi, uint8_t cs, uint16_t width, uint16_t height, uint32_t freq = 2000000);
+    GL(uint8_t cs, uint16_t width, uint16_t height, uint32_t freq = 2000000);
     ~GL();
 
     void initGL();

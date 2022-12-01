@@ -16,7 +16,7 @@ class Display : public Print {
     public:
         virtual size_t write(uint8_t c) { return 0; };
 
-        Display(uint8_t cs, uint8_t clk, uint8_t mosi, uint32_t freq, uint16_t width, uint16_t height);
+        Display(uint8_t cs, uint32_t freq, uint16_t width, uint16_t height);
 
         ~Display();
 
@@ -37,7 +37,7 @@ class Display : public Print {
         uint8_t* context_buffer; // context buffer; It's basicly the frame buffer of the screen
 
     private:
-        SPIDriver* spi_interface;
+        SPIDevice* device;
 
         uint8_t sharpmem_vcom;
 

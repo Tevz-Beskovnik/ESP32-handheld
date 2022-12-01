@@ -18,6 +18,7 @@ TODO:
 #include <textures.h>
 #include <Console-IO.hpp>
 #include <FreeRTOSConfig.h>
+#include <SPI_driver.hpp>
 
 #define CONSOLE_INTERFACE 0
 #define GAME_1 1
@@ -58,6 +59,8 @@ uint8_t selectedGame = 0;
 
 // graphics library
 GL* gl;
+
+SPIDriver* spi_driver;
 
 /**
  * @brief sets up the game console interface etc...
@@ -223,7 +226,10 @@ void consoleLoop() {
 void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenW, uint16_t screenH)
 {
     setupIO();
-    gl = new GL(clk, di, cs, screenW, screenH);
+
+    spi_driver = new SPIDriver(clk, di, -1);
+
+    gl = new GL( cs, screenW, screenH);
 
     gl->initGL();
     gl->clearDisplay();
