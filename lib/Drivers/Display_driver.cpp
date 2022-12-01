@@ -31,9 +31,11 @@ static const uint8_t PROGMEM set[] = {1, 2, 4, 8, 16, 32, 64, 128},
  * 
  * @param screen_height display height
 */
-Display::Display(uint8_t cs, uint32_t freq, uint16_t screen_width, uint16_t screen_height)
+Display::Display(uint8_t cs, int32_t freq, uint16_t screen_width, uint16_t screen_height)
     : device(new SPIDevice(SPI_DEVICE_BIT_LSBFIRST, freq)), sharpmem_vcom(SHARPMEM_CMD_VCOM), height(screen_height), width(screen_width), csPin(cs), bytes_per_line(screen_width/8)
 {
+    gpio_pad_select_gpio(cs);
+    gpio_set_direction((gpio_num_t)cs, GPIO_MODE_OUTPUT);
 }
 
 Display::~Display() { free(display_buffer); }
@@ -46,7 +48,7 @@ void Display::begin()
     display_buffer = (uint8_t*)malloc(sizeof(uint8_t)*height*width/8);
     memset((void*)display_buffer, 0xFF, sizeof(uint8_t)*height*width/8);
 
-    digitalWrite(csPin, LOW);
+    gpio_set_level((gpio_num_t)csPin, LOW);
 }
 
 /**
@@ -54,11 +56,11 @@ void Display::begin()
 */
 void Display::clearDisplay()
 {
-    digitalWrite(csPin, HIGH);
+    gpio_set_level((gpio_num_t)csPin, 1);
     uint8_t data[2] = {(uint8_t)(sharpmem_vcom | SHARPMEM_CMD_CLEAR_SCREEN), 0};
     device->spiCommand(data, 2);
     TOGGLE_VCOM
-    digitalWrite(csPin, LOW);
+    gpio_set_level((gpio_num_t)csPin, 0);
 }
 
 /**
@@ -96,7 +98,7 @@ void Display::refresh()
     uint8_t line[bytes_per_line+2];
     uint16_t totalBytes = (width*height/8);
 
-    digitalWrite(csPin, HIGH);
+    gpio_set_level((gpio_num_t)csPin, HIGH);
     device->spiCommand(&cmd, 1);
 
     for(uint16_t i = 0; i < totalBytes; i+=bytes_per_line){
@@ -111,7 +113,7 @@ void Display::refresh()
     cmd = 0x00;
     device->spiCommand(&cmd, 1);
     TOGGLE_VCOM
-    digitalWrite(csPin, LOW);
+    gpio_set_level((gpio_num_t)csPin, LOW);
 }
 
 /**
@@ -131,8 +133,8 @@ void Display::refresh(uint8_t lineNum)
 
     memcpy((uint8_t*)((uint8_t*)(line)+2), (uint8_t*)(display_buffer+lineAddress), bytes_per_line);
 
-    digitalWrite(csPin, HIGH); // <---- Data transmition
+    gpio_set_level((gpio_num_t)csPin, HIGH); // <---- Data transmition
     device->spiCommand(line, bytes_per_line+4);
     TOGGLE_VCOM
-    digitalWrite(csPin, LOW);
+    gpio_set_level((gpio_num_t)csPin, LOW);
 }

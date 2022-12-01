@@ -16,7 +16,7 @@ class Display : public Print {
     public:
         virtual size_t write(uint8_t c) { return 0; };
 
-        Display(uint8_t cs, uint32_t freq, uint16_t width, uint16_t height);
+        Display(uint8_t cs, int32_t freq, uint16_t width, uint16_t height);
 
         ~Display();
 

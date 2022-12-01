@@ -23,12 +23,6 @@ SPIDriver::SPIDriver(uint8_t pinClk, int pinMosi, int pinMiso)
     // new spi driver
     esp_err_t err;
 
-    // config pins rst and cs pin
-    //gpio_pad_select_gpio(pinRst);
-    //gpio_set_direction((gpio_num_t)pinRst, GPIO_MODE_OUTPUT);
-    //gpio_pad_select_gpio(pinCs);
-    //gpio_set_direction((gpio_num_t)pinCs, GPIO_MODE_OUTPUT);
-
     spi_bus_config_t cfg = {
         .mosi_io_num = pinMosi,
         .miso_io_num = pinMiso,
@@ -41,13 +35,7 @@ SPIDriver::SPIDriver(uint8_t pinClk, int pinMosi, int pinMiso)
     bus_cfg = cfg;
 
     err = spi_bus_initialize(VSPI_HOST, &bus_cfg, 0);
-    Serial.printf("Value of err = %d", err);
     assert(err == ESP_OK);
-    
-    // old spi driver
-    /*spi->begin(pinClk, pinMiso, pinMosi, pinCs);
-
-    pinMode(pinCs, OUTPUT);*/
 }
 
 // new spi device class for registering devices

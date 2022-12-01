@@ -1,9 +1,6 @@
 #ifndef _SPI_DRIVER_
 #define _SPI_DRIVER_
 
-#include <Wire.h>
-#include <SPI.h>
-#include <Arduino.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
@@ -22,26 +19,14 @@ class SPIDriver {
     public:
         SPIDriver(uint8_t pinClk, int pinMosi, int pinMiso);
 
-        /*~SPIDriver();
-
-        void spiCommand(uint8_t* dataBuffer, uint32_t len);
-
-        SPIClass* getInterface();*/
-
     private:
-        // new spi driver
         spi_bus_config_t bus_cfg;
-
-        // old spi driver
-        /*SPIClass* spi;
-
-        SPISettings* settings;*/
 };
 
 // new spi devcie class
 class SPIDevice {
     public:
-        SPIDevice(uint8_t flags, int32_t clock);
+        SPIDevice(uint8_t flags, int32_t clock = 2000000);
 
         void spiCommand(uint8_t* dataBuffer, uint32_t len);
 

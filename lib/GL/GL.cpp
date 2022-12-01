@@ -42,7 +42,7 @@
  * 
  * @param freq frequency of SPI, not needed in most cases
 */
-GL::GL(uint8_t cs, uint16_t width, uint16_t height, uint32_t freq)
+GL::GL(uint8_t cs, uint16_t width, uint16_t height, int32_t freq)
 : Display(cs, freq, width, height), texture_buffer(NULL), _w(width), _h(height), _cp437(false), wrap(false)
 {
   tex[0] = NULL;
