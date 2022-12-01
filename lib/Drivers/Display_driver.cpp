@@ -48,7 +48,7 @@ void Display::begin()
     display_buffer = (uint8_t*)malloc(sizeof(uint8_t)*height*width/8);
     memset((void*)display_buffer, 0xFF, sizeof(uint8_t)*height*width/8);
 
-    gpio_set_level((gpio_num_t)csPin, LOW);
+    gpio_set_level((gpio_num_t)csPin, 0);
 }
 
 /**
@@ -98,7 +98,7 @@ void Display::refresh()
     uint8_t line[bytes_per_line+2];
     uint16_t totalBytes = (width*height/8);
 
-    gpio_set_level((gpio_num_t)csPin, HIGH);
+    gpio_set_level((gpio_num_t)csPin, 1);
     device->spiCommand(&cmd, 1);
 
     for(uint16_t i = 0; i < totalBytes; i+=bytes_per_line){
@@ -113,7 +113,7 @@ void Display::refresh()
     cmd = 0x00;
     device->spiCommand(&cmd, 1);
     TOGGLE_VCOM
-    gpio_set_level((gpio_num_t)csPin, LOW);
+    gpio_set_level((gpio_num_t)csPin, 0);
 }
 
 /**
@@ -133,8 +133,8 @@ void Display::refresh(uint8_t lineNum)
 
     memcpy((uint8_t*)((uint8_t*)(line)+2), (uint8_t*)(display_buffer+lineAddress), bytes_per_line);
 
-    gpio_set_level((gpio_num_t)csPin, HIGH); // <---- Data transmition
+    gpio_set_level((gpio_num_t)csPin, 1); // <---- Data transmition
     device->spiCommand(line, bytes_per_line+4);
     TOGGLE_VCOM
-    gpio_set_level((gpio_num_t)csPin, LOW);
+    gpio_set_level((gpio_num_t)csPin, 0);
 }
