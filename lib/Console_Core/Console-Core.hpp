@@ -153,14 +153,14 @@ void consoleInterfaceFinish(GL* gfx)
 }
 
 /***/
-void gameButton(uint8_t color, const char* text, uint8_t i)
+void gameButton(GL* gfx, uint8_t color, const char* text, uint8_t i)
 {
-    gl->fillRect(149, 59+(i*25), (strlen(text)*12)+10, 20, !color);
-    gl->fillRect(151, 65+(i*25), 6, 6, color);
-    gl->setCursor(160, 61+(i*25));
-    gl->fontSize(FONT_SIZE_2);
-    gl->textColor(color);
-    gl->printf(text);
+    gfx->fillRect(149, 59+(i*25), (strlen(text)*12)+10, 20, !color);
+    gfx->fillRect(151, 65+(i*25), 6, 6, color);
+    gfx->setCursor(160, 61+(i*25));
+    gfx->fontSize(FONT_SIZE_2);
+    gfx->textColor(color);
+    gfx->printf(text);
 }
 
 /**
@@ -184,22 +184,22 @@ void consoleInterface(GL* gfx)
 {
     gl->clearDisplayBuffer();
 
-    if(selectedGame > 0 && isPressedSticky(BUTTON_UP_ID))
+    if(selectedGame > 0 && is_pressed_sticky(BUTTON_UP_ID))
     {
         selectedGame--;
     }
 
-    if(selectedGame < numGames-2 && isPressedSticky(BUTTON_DOWN_ID)) 
+    if(selectedGame < numGames-2 && is_pressed_sticky(BUTTON_DOWN_ID)) 
     {
         selectedGame++;
     }
 
-    if(isPressedSticky(BUTTON_A_ID)) launchGame(selectedGame+1);
+    if(is_pressed_sticky(BUTTON_A_ID)) launchGame(selectedGame+1);
 
     gl->drawTexture(0, 0, TEXTURE_BINDING_1);
 
     for(uint8_t i = 0; i < numGames-1; i++){
-        gameButton(selectedGame == i ? BLACK : WHITE, (const char*)gameNames[i], i);
+        gameButton(gl ,selectedGame == i ? BLACK : WHITE, (const char*)gameNames[i], i);
     }
 
     gl->refresh();
