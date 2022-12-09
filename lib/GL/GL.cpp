@@ -42,8 +42,8 @@
  * 
  * @param freq frequency of SPI, not needed in most cases
 */
-GL::GL(uint8_t clk, uint8_t mosi, uint8_t cs, uint16_t width, uint16_t height, uint32_t freq)
-: Display(cs, clk, mosi, freq, width, height), texture_buffer(NULL), _w(width), _h(height), _cp437(false), wrap(false)
+GL::GL(uint8_t cs, uint16_t width, uint16_t height, int32_t freq)
+: Display(cs, freq, width, height), texture_buffer(NULL), _w(width), _h(height), _cp437(false), wrap(false)
 {
   tex[0] = NULL;
   tex[1] = NULL;
@@ -712,6 +712,7 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
   tex[textureBinding] = (uint8_t*)malloc((_tile_h*_tile_w)/8);
   w[textureBinding] = _tile_w;
   h[textureBinding] = _tile_h;
+  dynamicTex[textureBinding] = true;
   uint8_t* texture = tex[textureBinding];
   uint16_t pointerPos1 = 0;
   uint16_t pointerPos2 = (y*((_texture_w/8)*(_tile_h)))+(x*(_tile_w/8));
@@ -735,7 +736,7 @@ bool GL::loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding)
  * 
  * @param textureBinding the texture binding that the texture shouold be bound to (default is TEXTURE_BINDING_0)
 */
-bool GL::drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y, uint8_t textureBinding)
+bool GL::drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y)
 {
   #ifndef UNSAFE_GL
   if((x > (_texture_w/_hnbtile_w-1)) || (y > (_texture_h/_tile_h-1)) || texture_buffer == NULL || !(textureBinding < MAX_TEX_BINDINGS))
@@ -876,6 +877,13 @@ void rotate90deg(const uint8_t* in, uint8_t* out, uint16_t w, uint16_t x, uint16
     }
 }
 
+/*
+  TODO: 
+    - rotation doesnt work
+    - look at how textures order bit chunks in game1.hpp
+    - fix: organise the chunks in correct order then rotate them
+      and store them in the reverse order again like in game1.hpp's texture
+*/
 // texture rotation
 void rotateBitmap(uint16_t w, uint16_t h, uint8_t* buffer, uint8_t* out) {
     memset(out, 0, w*h/8);

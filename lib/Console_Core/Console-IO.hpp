@@ -4,8 +4,7 @@
  * @description: Iot stuff, not including screen....
 */
 
-#ifndef _CONSOLE_IO_
-#define _CONSOLE_IO_
+#pragma once
 
 #include <FreeRTOSConfig.h>
 #include <Arduino.h>
@@ -84,5 +83,3 @@ bool isPressedSticky(uint8_t id = BUTTON_UP_ID)
     Buttons[id].state = currentState;
     return false;
 }
-
-#endif

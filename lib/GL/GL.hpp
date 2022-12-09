@@ -2,14 +2,13 @@
  * @author: Tevž Beškovnik
  * @date: 14. 7. 2022
  * @description: graphics library with basic render functions extends on the Adafruit-GFX
- * credit for all other functions goes to them
+ * credit for a lot of these functions goes to them
 */
 
 /*
 TODO:
-    - Add support for rotation of textures <----
-    - Implement the fast line drawing alg to as many functions as possible
-    - Blend modes, as in blending two images together
+    - Implement the fast line drawing alg to as many functions as possible <--- (NEXT TO DO)
+    - Fix texture rotation
 */
 
 #ifndef _GL_
@@ -73,7 +72,7 @@ TODO:
 class GL : public Display
 {
     public:
-    GL(uint8_t clk, uint8_t mosi, uint8_t cs, uint16_t width, uint16_t height, uint32_t freq = 2000000);
+    GL(uint8_t cs, uint16_t width, uint16_t height, int32_t freq = 2000000);
     ~GL();
 
     void initGL();
@@ -115,7 +114,7 @@ class GL : public Display
 
     bool loadTileMap(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t tile_w, uint8_t tile_h);
     bool loadTileFromMap(uint8_t x, uint8_t y, uint8_t textureBinding = TEXTURE_BINDING_0);
-    bool drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y, uint8_t textureBinding = TEXTURE_BINDING_0);
+    bool drawTileFromMap(uint16_t x, uint16_t y, uint8_t tex_x, uint8_t tex_y);
 
     bool loadTexture(uint8_t* buffer, uint16_t width, uint16_t height, uint8_t textureBinding = TEXTURE_BINDING_0, bool dynmaci = false);
     bool allocateTexture(uint16_t width, uint16_t height, uint8_t textureBinding = TEXTURE_BINDING_0);
