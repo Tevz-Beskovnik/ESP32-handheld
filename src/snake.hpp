@@ -93,22 +93,22 @@ bool checkCollisions() {
 void snakeLoop(GL* gfx) 
 {
     if(game_over) exitGame();
-    if(isPressed(BUTTON_DOWN_ID) && travel_dir_v != UP){
+    if(is_pressed(BUTTON_DOWN_ID) && travel_dir_v != UP){
         head_rotation = TEXTURE_BINDING_2;
         travel_dir_v = DOWN;
         travel_dir_h = 0;
     }
-    if(isPressed(BUTTON_UP_ID) && travel_dir_v != DOWN){
+    if(is_pressed(BUTTON_UP_ID) && travel_dir_v != DOWN){
         head_rotation = TEXTURE_BINDING_0;
         travel_dir_v = UP;
         travel_dir_h = 0;
     }
-    if(isPressed(BUTTON_LEFT_ID) && travel_dir_h != RIGHT){
+    if(is_pressed(BUTTON_LEFT_ID) && travel_dir_h != RIGHT){
         head_rotation = TEXTURE_BINDING_1;
         travel_dir_v = 0;
         travel_dir_h = LEFT;
     }
-    if(isPressed(BUTTON_RIGHT_ID) && travel_dir_h != LEFT){
+    if(is_pressed(BUTTON_RIGHT_ID) && travel_dir_h != LEFT){
         head_rotation = TEXTURE_BINDING_3;
         travel_dir_v = 0;
         travel_dir_h = RIGHT;

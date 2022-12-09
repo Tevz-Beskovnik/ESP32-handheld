@@ -71,13 +71,13 @@ void gameLoop2(GL* gfx)
                 gfx->drawTexture(j*16, 16 + i*16, game_map[i][j]-1);
         }
     }
-    if(isPressedSticky(BUTTON_DOWN_ID) && (game_map[game_y+1][game_x] == 0))
+    if(is_pressed_sticky(BUTTON_DOWN_ID) && (game_map[game_y+1][game_x] == 0))
         game_y++;
-    if(isPressedSticky(BUTTON_UP_ID) && (game_map[game_y-1][game_x] == 0))
+    if(is_pressed_sticky(BUTTON_UP_ID) && (game_map[game_y-1][game_x] == 0))
         game_y--;
-    if(isPressedSticky(BUTTON_RIGHT_ID) && (game_map[game_y][game_x+1] == 0))
+    if(is_pressed_sticky(BUTTON_RIGHT_ID) && (game_map[game_y][game_x+1] == 0))
         game_x++;
-    if(isPressedSticky(BUTTON_LEFT_ID) && (game_map[game_y][game_x-1] == 0))
+    if(is_pressed_sticky(BUTTON_LEFT_ID) && (game_map[game_y][game_x-1] == 0))
         game_x--;
 
     gfx->drawTexture(game_x*16, 16 + game_y*16, TEXTURE_BINDING_2);
