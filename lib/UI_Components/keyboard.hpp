@@ -7,6 +7,7 @@
 
 // actions
 #define NO_CHAR_SELECT 0xff
+#define INPUT_COMPLETE 0x01
 class Keyboard
 {
     public:
@@ -16,15 +17,13 @@ class Keyboard
 
         char prompt();
 
-        char* prompt_string(uint8_t length);
+        void prompt_string(char* out_string, uint8_t length);
 
-        uint64_t prompt_number();
+        uint64_t prompt_number(uint8_t length);
     private:
-        void render_text_keyboard(); // draws the keyboard variant with letters
-
-        void render_text_keyboard(char* string); // draws the keyboard variant with letters and the current string to display
+        void render_text_keyboard(char* string, uint8_t length); // draws the keyboard variant with letters and the current string to display
         
-        void render_numeric_keyboard(); // draws the numbered keyboard variant
+        void render_numeric_keyboard(char* string, uint8_t length); // draws the numbered keyboard variant
 
         char determin_action(); // determin what action to take from gotten input
 

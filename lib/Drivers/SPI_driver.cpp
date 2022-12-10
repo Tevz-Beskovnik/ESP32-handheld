@@ -11,18 +11,11 @@
  * 
  * @param pinMosi mosi pin
  * 
- * @param pinCs cs pin
- * 
- * @param pBitOrder bit order of data
- * 
- * @param clock frequency 
+ * @param pinMiso miso pin
 */
 SPIDriver::SPIDriver(uint8_t pinClk, int pinMosi, int pinMiso)
 //: spi(new SPIClass()), settings(new SPISettings(clock, pBitOrder, SPI_MODE0))
 {
-    // new spi driver
-    esp_err_t err;
-
     spi_bus_config_t cfg = {
         .mosi_io_num = pinMosi,
         .miso_io_num = pinMiso,
@@ -34,7 +27,7 @@ SPIDriver::SPIDriver(uint8_t pinClk, int pinMosi, int pinMiso)
 
     bus_cfg = cfg;
 
-    err = spi_bus_initialize(VSPI_HOST, &bus_cfg, 0);
+    esp_err_t err = spi_bus_initialize(VSPI_HOST, &bus_cfg, 0);
     assert(err == ESP_OK);
 }
 
@@ -48,8 +41,6 @@ SPIDriver::SPIDriver(uint8_t pinClk, int pinMosi, int pinMiso)
 */
 SPIDevice::SPIDevice(uint8_t flags, int32_t clock)
 {
-    esp_err_t err;
-
     spi_device_interface_config_t cfg = {
         .mode = 0,
         .clock_speed_hz = (int)clock,
@@ -61,7 +52,7 @@ SPIDevice::SPIDevice(uint8_t flags, int32_t clock)
 
     dev_cfg = cfg;
 
-    err = spi_bus_add_device(VSPI_HOST, &dev_cfg, &dev_handle);
+    esp_err_t err = spi_bus_add_device(VSPI_HOST, &dev_cfg, &dev_handle);
     assert(err == ESP_OK);
 }
 
@@ -87,7 +78,36 @@ void SPIDevice::spiCommand(uint8_t* dataBuffer, uint32_t len)
 }
 
 /**
- * @description: send command to device and read return
+ * @description: send command to device and read return into inBuffer
+ * 
+ * @param outBuffer buffer to be sent to device
+ * 
+ * @param outLen lenght of buffer in bytes that is being sent to device
+ * 
+ * @param inBuffer buffer to store returned data from device
+ * 
+ * @param inLen expected lenght of incoming data recieved from device
+ * 
+ * @param flags aditional flags to give to the transmit function
+*/
+void SPIDevice::spiCommand(uint8_t* outBuffer, uint32_t outLen, uint8_t* inBuffer, uint32_t inLen, uint32_t flags)
+{
+    spi_transaction_t transaction = {
+        .flags = flags, // additional flags for the function
+        .length = 8 * outLen, // sizeof(char) * (lenght of buffer)
+        .rxlength = 8 * inLen,
+        .tx_buffer = (void*)outBuffer,
+        .rx_buffer = (void*)inBuffer
+    };
+
+    dev_transaction = transaction;
+
+    esp_err_t err = spi_device_transmit(dev_handle, &dev_transaction);
+    assert(err == ESP_OK);
+}
+
+/**
+ * @description: send command to device and read return into inBuffer
  * 
  * @param outBuffer buffer to be sent to device
  * 
@@ -100,8 +120,8 @@ void SPIDevice::spiCommand(uint8_t* dataBuffer, uint32_t len)
 void SPIDevice::spiCommand(uint8_t* outBuffer, uint32_t outLen, uint8_t* inBuffer, uint32_t inLen)
 {
     spi_transaction_t transaction = {
-        .flags = 0,
-        .length = 8 * outLen,
+        .flags = 0, // additional flags for the function
+        .length = 8 * outLen, // sizeof(char) * (lenght of buffer)
         .rxlength = 8 * inLen,
         .tx_buffer = (void*)outBuffer,
         .rx_buffer = (void*)inBuffer
@@ -109,7 +129,8 @@ void SPIDevice::spiCommand(uint8_t* outBuffer, uint32_t outLen, uint8_t* inBuffe
 
     dev_transaction = transaction;
 
-    spi_device_transmit(dev_handle, &dev_transaction);
+    esp_err_t err = spi_device_transmit(dev_handle, &dev_transaction);
+    assert(err == ESP_OK);
 }
 
 /**
@@ -117,5 +138,6 @@ void SPIDevice::spiCommand(uint8_t* outBuffer, uint32_t outLen, uint8_t* inBuffe
 */
 void SPIDevice::spiCommand()
 {
-    spi_device_transmit(dev_handle, &dev_transaction);
+    esp_err_t err = spi_device_transmit(dev_handle, &dev_transaction);
+    assert(err == ESP_OK);
 }

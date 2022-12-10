@@ -122,9 +122,22 @@ bool is_pressed_sticky(uint8_t id = BUTTON_UP_ID)
 */
 void register_interupts()
 {
+    esp_err_t err;
+
+    err = gpio_install_isr_service(0);
+    assert(err == ESP_OK);
+
     interuptQueue = xQueueCreate(10, sizeof(int));
+
     for(uint8_t i = 0; i < 6; i++)
-        gpio_isr_handler_add((gpio_num_t)Buttons[i].pinNum, io_interrupt_handler, (void *)&Buttons[i].pinNum);
+    {
+        gpio_pad_select_gpio((gpio_num_t)Buttons[i].pinNum);
+        err = gpio_set_intr_type((gpio_num_t)Buttons[i].pinNum, GPIO_INTR_POSEDGE);
+        assert(err == ESP_OK);
+
+        err = gpio_isr_handler_add((gpio_num_t)Buttons[i].pinNum, io_interrupt_handler, (void *)&Buttons[i].pinNum);
+        assert(err == ESP_OK);
+    }
 }
 
 /**
@@ -145,6 +158,13 @@ uint8_t check_io_interrupts()
 */
 void remove_interupts()
 {
+    esp_err_t err;
     for(uint8_t i = 0; i < 6; i++)
-        gpio_isr_handler_remove((gpio_num_t)Buttons[i].pinNum);
+    {
+        err = gpio_isr_handler_remove((gpio_num_t)Buttons[i].pinNum);
+        assert(err == ESP_OK);
+    }
+
+    vQueueDelete(interuptQueue);
+    gpio_uninstall_isr_service();
 }
