@@ -44,6 +44,8 @@
 #define BUTTON_B 14
 #endif
 
+#define NO_IO_EVENT 0xff
+
 struct ButtonInfo {
     uint8_t pinNum;
     uint8_t state;
@@ -57,7 +59,7 @@ static void IRAM_ATTR io_interrupt_handler(void *args)
 }
 
 /**
- * @desicription: setsup the io of the console
+ * @brief: setsup the io of the console
 */
 void setupIO()
 {
@@ -89,7 +91,7 @@ void setupIO()
 }
 
 /**
- * @description: checks if the buttons is pressed
+ * @brief checks if the buttons is pressed
  * 
  * @param id of button to check, by default set to BUTTON_UP_ID
 */
@@ -99,7 +101,7 @@ bool is_pressed(uint8_t id = BUTTON_UP_ID)
 }
 
 /**
- * @description: check if button was clicked returns 1 once then 0 if the button is still pressed
+ * @brief check if button was clicked returns 1 once then 0 if the button is still pressed
  * 
  * @param id of button to check, by default set to BUTTON_UP_ID
 */
@@ -116,30 +118,30 @@ bool is_pressed_sticky(uint8_t id = BUTTON_UP_ID)
 }
 
 /**
- * @description: registers interrupts for console IO intputs
+ * @brief registers interrupts for console IO intputs
 */
 void register_interupts()
 {
     interuptQueue = xQueueCreate(10, sizeof(int));
     for(uint8_t i = 0; i < 6; i++)
-        gpio_isr_handler_add((gpio_num_t)Buttons[i].pinNum, io_interrupt_handler, (void *)Buttons[i].pinNum);
+        gpio_isr_handler_add((gpio_num_t)Buttons[i].pinNum, io_interrupt_handler, (void *)&Buttons[i].pinNum);
 }
 
 /**
- * @description: check if any GPIO interupts happened if true will return number of pin return 255 if no buttons were pressed
+ * @brief check if any GPIO interupts happened if true will return number of pin return 255 if no buttons were pressed
 */
-uint8_t check_interrupts()
+uint8_t check_io_interrupts()
 {
     for(uint8_t i = 0; i < 6; i++)
     {
         if(xQueueReceive(interuptQueue, &Buttons[i].pinNum, portMAX_DELAY))
             return Buttons[i].pinNum;
     }
-    return 0xff;
+    return NO_IO_EVENT;
 }
 
 /**
- * @description: unregisters all console IO interrupts
+ * @brief unregisters all console IO interrupts
 */
 void remove_interupts()
 {

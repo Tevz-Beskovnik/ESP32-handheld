@@ -81,7 +81,7 @@ class GL : public Display
     uint8_t* changeContext(uint8_t newContext = CONTEXT_BUFFER);
 
     void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size_x, uint8_t size_y);
-    using Print::write;
+    using Print::write; // tell the print library that we are writing our own write funtion
     virtual size_t write(uint8_t c);
 
     void setCursor(uint16_t x, uint16_t y) { _cursor_x = x; _cursor_y = y; };

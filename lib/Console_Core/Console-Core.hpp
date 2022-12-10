@@ -199,7 +199,7 @@ void consoleInterface(GL* gfx)
     gl->drawTexture(0, 0, TEXTURE_BINDING_1);
 
     for(uint8_t i = 0; i < numGames-1; i++){
-        gameButton(gl ,selectedGame == i ? BLACK : WHITE, (const char*)gameNames[i], i);
+        gameButton(gl, selectedGame == i ? BLACK : WHITE, (const char*)gameNames[i], i);
     }
 
     gl->refresh();
