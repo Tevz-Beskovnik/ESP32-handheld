@@ -19,6 +19,7 @@ TODO:
 #include <Console-IO.hpp>
 #include <FreeRTOSConfig.h>
 #include <SPI_driver.hpp>
+#include <keyboard.hpp>
 
 #define CONSOLE_INTERFACE 0
 #define GAME_1 1
@@ -59,6 +60,8 @@ uint8_t selectedGame = 0;
 
 // graphics library
 GL* gl;
+
+Keyboard* keyboard_comp;
 
 SPIDriver* spi_driver;
 
@@ -230,6 +233,8 @@ void setupConsole(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screenW, uint16_
     spi_driver = new SPIDriver(clk, di, -1);
 
     gl = new GL( cs, screenW, screenH);
+
+    //keyboard_comp = new Keyboard(gl);
 
     gl->initGL();
     gl->clearDisplay();

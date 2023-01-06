@@ -1,7 +1,11 @@
+
 #include <GL.hpp>
-#include <Console-IO.hpp>
+#include <Console-Core.hpp>
 
 // what type of keyboard to render
+#ifndef _KEYBOARD_
+#define _KEYBOARD_
+
 #define KB_TYPE_NUM 1
 #define KB_TYPE_CHAR 0
 
@@ -48,3 +52,5 @@ class Keyboard
 
         bool caps = false;
 };
+
+#endif

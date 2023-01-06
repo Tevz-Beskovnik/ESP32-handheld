@@ -4,6 +4,14 @@
  * @description: Iot stuff, not including screen....
 */
 
+/**
+ * TODO:
+ * Re-write this whole shite as a class
+ * too much shit with the lincer having all kinds of redefenitions
+ * just stick to the C++ coding convetions
+ * my fucking head hurst couse of this shit
+*/
+
 #pragma once
 
 #include <FreeRTOSConfig.h>
@@ -13,6 +21,7 @@
 #include "driver/spi_master.h"
 #include "soc/gpio_struct.h"
 #include "driver/gpio.h"
+#include "freertos/queue.h"
 
 #define BUTTON_UP_ID 0
 #ifndef BUTTON_UP
@@ -50,6 +59,7 @@ struct ButtonInfo {
     uint8_t pinNum;
     uint8_t state;
 } Buttons[6];
+
 xQueueHandle interuptQueue;
 
 static void IRAM_ATTR io_interrupt_handler(void *args)

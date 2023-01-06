@@ -89,7 +89,7 @@ uint64_t Keyboard::prompt_number(uint8_t length)
     remove_interupts();
 }
 
-void Keyboard::render_text_keyboard(char* string = nullptr, uint8_t length)
+void Keyboard::render_text_keyboard(char* string = nullptr, uint8_t length = 0)
 {
     uint8_t line_number = 0;
 
@@ -115,7 +115,7 @@ void Keyboard::render_text_keyboard(char* string = nullptr, uint8_t length)
     }
 }
         
-void Keyboard::render_numeric_keyboard(char* string = nullptr, uint8_t length)
+void Keyboard::render_numeric_keyboard(char* string = nullptr, uint8_t length = 0)
 {
     uint8_t line_number = 0;
 
