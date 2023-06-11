@@ -20,10 +20,13 @@ public:
 
 	bool loop() override
 	{
-		char got = kb->prompt();
+		char test[10];
+		uint8_t len = 10;
+		kb->prompt_string(test, len);
 
 		Serial.println("Got char:");
-		Serial.printf("Read character from keyboard: %c\n", got);
+		Serial.printf("Read character from keyboard: ");
+		Serial.println(test);
 
 		return false;
 	}

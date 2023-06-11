@@ -66,6 +66,9 @@ void Keyboard::prompt_string(char *out_string, uint8_t length)
 {
     delay(200);
 
+    for (uint8_t i = 0; i < length; i++)
+        out_string[i] = ' ';
+
     keyboard_type = KB_TYPE_CHAR;
 
     // register interupts at start of promt
@@ -92,6 +95,10 @@ void Keyboard::prompt_string(char *out_string, uint8_t length)
 
         if (res == INPUT_COMPLETE) // break the loop if input is compleate
             break;
+
+        gl->setCursor(0, 0);
+        for (uint8_t i = 0; i < length; i++)
+            gl->print(out_string[i]);
     }
 
     // unregister interupts at end of prompt
@@ -248,7 +255,7 @@ inline void Keyboard::increment_cursor_and_render(int32_t add)
 char Keyboard::get_selected_character()
 {
     if (keyboard_type == KB_TYPE_CHAR)
-        return caps ? char_keyboard[cursor_pos] - 0x20 : char_keyboard[cursor_pos];
+        return char_keyboard[cursor_pos] - (0x20 * caps) * (cursor_pos > 9);
     else
         return num_keyboard[cursor_pos];
 }
