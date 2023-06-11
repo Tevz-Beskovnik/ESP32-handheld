@@ -20,6 +20,11 @@ public:
 
 	bool loop() override
 	{
+		char got = kb->prompt();
+
+		Serial.println("Got char:");
+		Serial.printf("Read character from keyboard: %c\n", got);
+
 		return false;
 	}
 

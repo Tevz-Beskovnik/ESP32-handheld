@@ -41,7 +41,7 @@ void ConsoleUI::setup()
     gfx->setCursor(20, 8);
     gfx->fontSize(1);
     gfx->textColor(BLACK);
-    gfx->print("ESP-HANDHEALD");
+    gfx->print("ESP-SHITBOARD");
 
     gfx->fillRect(19, 34, 120, 186, WHITE);
     gfx->setCursor(28, 40);

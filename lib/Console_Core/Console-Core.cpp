@@ -5,7 +5,7 @@ Console::Console(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screen_width, uin
 {
     setupIO();
 
-    spi_driver = new SPIDriver(clk, di, -1);
+    spi_driver = new SPIDriver(clk, di, -1); // DO NOT REMOVE THIS IT INITIALIZES THE SPI BUS
 
     gfx = new GL(cs, screen_width, screen_height);
 
@@ -36,9 +36,11 @@ Console::~Console()
     for (uint8_t i = 0; i < number_of_games; i++)
         delete apps[i];
 
+    delete kb;
+
     delete gfx;
 
-    delete kb;
+    delete spi_driver;
 }
 
 void Console::loop()

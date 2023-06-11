@@ -4,9 +4,10 @@ static xQueueHandle interuptQueue;
 
 static ButtonInfo Buttons[6];
 
-static void IRAM_ATTR io_interrupt_handler(void *args)
+void io_interrupt_handler(void *args)
 {
-    int pinNum = (int)args;
+    uint8_t pinNum = *((uint8_t *)args);
+    Serial.printf("Got key: %i\n", (int)pinNum);
     xQueueSendFromISR(interuptQueue, &pinNum, NULL);
 }
 
@@ -78,10 +79,11 @@ void register_interupts()
 
 uint8_t check_io_interrupts()
 {
+    uint8_t pinNum;
     for (uint8_t i = 0; i < 6; i++)
     {
-        if (xQueueReceive(interuptQueue, &Buttons[i].pinNum, portMAX_DELAY))
-            return Buttons[i].pinNum;
+        if (xQueueReceive(interuptQueue, &pinNum, portMAX_DELAY))
+            return pinNum;
     }
     return NO_IO_EVENT;
 }
@@ -91,10 +93,16 @@ void remove_interupts()
     esp_err_t err;
     for (uint8_t i = 0; i < 6; i++)
     {
+        gpio_pad_select_gpio((gpio_num_t)Buttons[i].pinNum);
+        err = gpio_set_intr_type((gpio_num_t)Buttons[i].pinNum, GPIO_INTR_DISABLE);
+        assert(err == ESP_OK);
+
         err = gpio_isr_handler_remove((gpio_num_t)Buttons[i].pinNum);
         assert(err == ESP_OK);
     }
 
     vQueueDelete(interuptQueue);
     gpio_uninstall_isr_service();
+
+    setupIO();
 }

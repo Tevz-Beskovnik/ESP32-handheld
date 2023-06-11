@@ -15,6 +15,7 @@
 #pragma once
 
 #include <FreeRTOSConfig.h>
+#include <Arduino.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
@@ -23,12 +24,12 @@
 #include "driver/gpio.h"
 #include "freertos/queue.h"
 
-#define BUTTON_UP_ID 0
+#define BUTTON_UP_ID 1
 #ifndef BUTTON_UP
 #define BUTTON_UP 35
 #endif
 
-#define BUTTON_DOWN_ID 1
+#define BUTTON_DOWN_ID 0
 #ifndef BUTTON_DOWN
 #define BUTTON_DOWN 33
 #endif

@@ -2,7 +2,6 @@
 
 #include <Application.hpp>
 #include <Console-IO.hpp>
-#include <GL.hpp>
 
 // screen res 400 240
 #define GAME_W 19
