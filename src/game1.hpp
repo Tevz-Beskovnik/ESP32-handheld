@@ -1,23 +1,32 @@
 #pragma once
 
-#include <Console-IO.hpp>
-#include <GL.hpp>
+#include <Application.hpp>
 
-void gameFinish1(GL* gfx)
+class Game1 : public Application
 {
-  	#ifdef DEBUG
-  	Serial.println("cleaning up!");
-  	#endif
-}
+public:
+	Game1()
+		: Application("Game 1")
+	{
+		;
+	}
 
-void gameSetup1(GL* gfx) 
-{
-	#ifdef DEBUG
-	Serial.println("Seting up environment");
-	#endif
-}
+	void setup() override
+	{
+#ifdef DEBUG
+		Serial.println("Seting up environment");
+#endif
+	}
 
-void gameLoop1(GL* gfx)
-{
-	
-}
+	bool loop() override
+	{
+		return false;
+	}
+
+	void cleanup() override
+	{
+#ifdef DEBUG
+		Serial.println("cleaning up!");
+#endif
+	}
+};
