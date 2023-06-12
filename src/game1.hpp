@@ -26,7 +26,10 @@ public:
 
 		Serial.println("Got char:");
 		Serial.printf("Read character from keyboard: ");
-		Serial.println(test);
+		for (uint8_t i = 0; i < len; i++)
+			Serial.print(test[i]);
+
+		Serial.println("");
 
 		return false;
 	}

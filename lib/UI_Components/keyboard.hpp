@@ -12,9 +12,14 @@
 // actions
 #define NO_CHAR_SELECT 0xff
 #define INPUT_COMPLETE 0x01
+#define BACKSPACE 0x02
 
 #define LINE_BRAKE_CHAR 10
 #define LINE_BRAKE_NUM 3
+
+#define KB_END 55
+#define KB_BACKSPACE 56
+
 class Keyboard
 {
 public:
@@ -49,10 +54,10 @@ private:
 
     GL *gl = nullptr;
 
-    uint8_t char_k_len = 37;
-    uint8_t num_k_len = 10;
-    char char_keyboard[37] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'q', 'w', 'e', 'r', 't', 'z', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'y', 'x', 'c', 'v', 'b', 'n', 'm', ' '};
-    char num_keyboard[10] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+    uint8_t char_k_len = 57;
+    uint8_t num_k_len = 12;
+    char char_keyboard[57] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'q', 'w', 'e', 'r', 't', 'z', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'y', 'x', 'c', 'v', 'b', 'n', 'm', ' ', ',', '.', '-', '+', '#', ';', ':', '_', '<', '>', '!', '?', '=', '(', ')', '&', '/', '*', 251, 0xAE};
+    char num_keyboard[12] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 251, 0xAE};
 
     bool caps = false;
 };

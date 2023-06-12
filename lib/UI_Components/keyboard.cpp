@@ -83,22 +83,28 @@ void Keyboard::prompt_string(char *out_string, uint8_t length)
 
     while (true)
     {
+        gl->setCursor(100, 27);
+        gl->textColorBackground(BLACK, WHITE);
+        for (uint8_t i = 0; i < length; i++)
+            gl->print(out_string[i]);
+        gl->refresh();
+
         input = check_io_interrupts();
         while (input == NO_IO_EVENT) // wait for a IO event to occure
             input = check_io_interrupts();
 
         res = determin_action();
-        if (res != NO_CHAR_SELECT && res != INPUT_COMPLETE && counter != length) // check if res is a letter and save if it is
-            out_string[++counter] = res;
+
+        if (res != NO_CHAR_SELECT && res != INPUT_COMPLETE && res != BACKSPACE && counter != length) // check if res is a letter and save if it is
+            out_string[counter++] = res;
         else if (counter == length)
             break;
 
+        if (res == BACKSPACE && counter != 0)
+            out_string[--counter] = ' ';
+
         if (res == INPUT_COMPLETE) // break the loop if input is compleate
             break;
-
-        gl->setCursor(0, 0);
-        for (uint8_t i = 0; i < length; i++)
-            gl->print(out_string[i]);
     }
 
     // unregister interupts at end of prompt
@@ -152,23 +158,20 @@ void Keyboard::render_text_keyboard()
 
     uint8_t line_number = 0;
 
-    gl->drawRect(0, 0, 400, 240, WHITE);
+    gl->fillRect(90, 70, 210, 170, BLACK);
+    gl->fillRect(90, 20, 210, 40, BLACK);
     gl->fontSize(FONT_SIZE_3);
     gl->textColor(BLACK);
 
     for (uint8_t i = 0; i < char_k_len; i++)
     {
         if (i == cursor_pos)
-        {
             gl->textColorBackground(WHITE, BLACK);
-        }
         else
-        {
             gl->textColorBackground(BLACK, WHITE);
-        }
 
-        gl->setCursor(100 + ((i - line_number * line_break) * 19), 100 + line_number * 25);
-        gl->print((char)(char_keyboard[i] - ((caps * 32) * (i > 9))));
+        gl->setCursor(100 + ((i - line_number * line_break) * 19), 80 + line_number * 25);
+        gl->print((char)(char_keyboard[i] - ((caps * 32) * (i > 9) * (i < 36))));
 
         if ((i + 1) % line_break == 0)
             line_number++;
@@ -241,7 +244,7 @@ char Keyboard::determin_action()
 
 inline void Keyboard::increment_cursor_and_render(int32_t add)
 {
-    uint8_t k_len = (keyboard_type == KB_TYPE_CHAR ? char_k_len : num_k_len) - 1;
+    uint8_t k_len = (keyboard_type == KB_TYPE_CHAR ? char_k_len : num_k_len);
 
     cursor_pos += k_len + add;
     cursor_pos %= k_len;
@@ -255,7 +258,7 @@ inline void Keyboard::increment_cursor_and_render(int32_t add)
 char Keyboard::get_selected_character()
 {
     if (keyboard_type == KB_TYPE_CHAR)
-        return char_keyboard[cursor_pos] - (0x20 * caps) * (cursor_pos > 9);
+        return (char_keyboard[cursor_pos] - (0x20 * caps) * (cursor_pos > 9) * (cursor_pos < 36)) * (cursor_pos != KB_END && cursor_pos != KB_BACKSPACE) + (INPUT_COMPLETE) * (cursor_pos == KB_END) + (BACKSPACE) * (cursor_pos == KB_BACKSPACE);
     else
         return num_keyboard[cursor_pos];
 }
