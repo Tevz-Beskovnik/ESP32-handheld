@@ -32,6 +32,8 @@ class SPIDevice {
 
         void spiCommand(uint8_t* outBuffer, uint32_t outLen, uint8_t* inBuffer, uint32_t inLen);
 
+        void spiCommand(uint8_t* outBuffer, uint32_t outLen, uint8_t* inBuffer, uint32_t inLen, uint32_t flags);
+
         void spiCommand();
 
     private:

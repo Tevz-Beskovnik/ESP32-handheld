@@ -6,35 +6,27 @@
 #include <game2.hpp>
 #include <snake.hpp>
 
-#define SHARP_CLK  25
+#define SHARP_CLK 25
 #define SHARP_DI 26
-#define SHARP_CS   27
+#define SHARP_CS 27
 
-#define BLACK 0
-#define WHITE 1
+Console console(SHARP_CLK, SHARP_DI, SHARP_CS, 400, 240);
 
 void setup(void)
 {
   Serial.begin(9600);
   delay(2000);
   Serial.println("Hello!");
-  registerGame(gameSetup1, gameLoop1, gameFinish1,  "Test game 1");
-  registerGame(gameSetup2, gameLoop2, gameFinish2, "Some maze");
-  registerGame(snakeSetup, snakeLoop, snakeFinish, "Snake");
 
-  setupConsole(SHARP_CLK, SHARP_DI, SHARP_CS, 400, 240);
+  console.add_application(new Game1());
+  console.add_application(new Game2());
+  console.add_application(new Snake());
 
-  //display.loadTexture(sprite, 32, 32, TEXTURE_BINDING_0);
-  //display.loadTexture(house, 32, 32, TEXTURE_BINDING_1);
-  /*display.loadTileMap(tileMap, 64, 64, 32, 32);
-  display.loadTileFromMap(0, 0, TEXTURE_BINDING_0);
-  display.loadTileFromMap(1, 0, TEXTURE_BINDING_1);*/
   Serial.println("Texture loaded");
   Serial.printf("Flash size: %i\n", ESP.getFlashChipSize());
 }
 
-
 void loop(void)
 {
-  consoleLoop();
+  console.loop();
 }
