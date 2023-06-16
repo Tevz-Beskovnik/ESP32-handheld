@@ -47,10 +47,27 @@ Deauther::Deauther()
     MEMCPY(ap_config.ap.ssid, ssid, 10);
 
     MEMCPY(ap_config.ap.password, password, 10);
+
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap_config));
+
+    ESP_ERROR_CHECK(esp_wifi_set_promiscuous(true));
+    ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
 }
 
 void Deauther::setup()
 {
+    gfx->clearDisplayBuffer();
+
+    gfx->allocateTexture(400, 240, TEXTURE_BINDING_1);
+    gfx->changeContext(TEXTURE_BINDING_1);
+    gfx->fillRect(0, 0, 400, 240, WHITE);
+    gfx->fillRectD(4, 4, 390, 230);
+    gfx->fillRect(9, 9, 380, 220, BLACK);
+
+    gfx->setCursor(10, 10);
+    gfx->fontSize(FONT_SIZE_3);
+    gfx->println("Deauther menu:");
 }
 
 bool Deauther::loop()
@@ -59,4 +76,15 @@ bool Deauther::loop()
 
 void Deauther::cleanup()
 {
+}
+
+void Deauther::change_channel(uint8_t channel)
+{
+    ap_config.ap.channel = channel;
+
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap_config));
+
+    ESP_ERROR_CHECK(esp_wifi_set_promiscuous(true));
+    ESP_ERROR_CHECK(esp_wifi_start());
+    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
 }

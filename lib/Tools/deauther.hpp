@@ -4,6 +4,7 @@
 #include <WiFi_driver.hpp>
 #include <Application.hpp>
 #include <memory.h>
+#include <button.hpp>
 
 class Deauther : public Application
 {
@@ -22,6 +23,8 @@ private:
     esp_err_t beacon();
 
     esp_err_t probe();
+
+    void change_channel(uint8_t channel);
 
     // lole
     esp_err_t send_raw(const uint8_t *packet, int32_t len, bool en_sys_seq);

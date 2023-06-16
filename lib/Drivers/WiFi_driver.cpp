@@ -1,6 +1,6 @@
 #include <WiFi_driver.hpp>
 
-void configure_wifi(wifi_init_config_t cfg, wifi_mode_t mode = WIFI_MODE_STA)
+void configure_wifi(wifi_init_config_t cfg, wifi_mode_t mode)
 {
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
