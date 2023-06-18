@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <Arduino.h>
 #include <Console-Core.hpp>
+#include <deauther.hpp>
 #include <game1.hpp>
 #include <game2.hpp>
 #include <snake.hpp>
@@ -19,7 +20,7 @@ void setup(void)
   Serial.println("Hello!");
 
   console.add_application(new Game1());
-  console.add_application(new Game2());
+  console.add_application(new Deauther());
   console.add_application(new Snake());
 
   Serial.println("Texture loaded");
