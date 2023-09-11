@@ -57,6 +57,46 @@
 	y = y >= _h ? _h - 1 : y; \
 	w = x + w > _w ? x + w - ((x + w) % _w) - x : w;
 
+void (*abstract_calls[38])(GL *, Event *) = {
+	ex_print,
+	ex_draw_char,
+	ex_set_cursor,
+	ex_font_size,
+	ex_text_color,
+	ex_background_color,
+	ex_font_wrap,
+	ex_draw_fast_raw_h_line,
+	ex_draw_line,
+	ex_draw_fast_raw_v_line,
+	ex_draw_rect,
+	ex_fill_rect,
+	ex_draw_triangle,
+	ex_fill_triangle,
+	ex_draw_circle,
+	ex_fill_circle,
+	ex_draw_line_d,
+	ex_draw_line_di,
+	ex_draw_rect_d,
+	ex_fill_rect_d,
+	ex_draw_triangle_d,
+	ex_fill_triangle_d,
+	ex_load_tile_map,
+	ex_load_tile_from_map,
+	ex_draw_tile_from_map,
+	ex_load_texture,
+	ex_allocate_texture,
+	ex_save_to_allocated,
+	ex_draw_texture,
+	ex_clear_texture,
+	ex_rotate_texture,
+	ex_crop_texture,
+	ex_crop_texture_to,
+	ex_invert_texture,
+	ex_blend_add,
+	ex_blend_sub,
+	ex_get_context,
+	ex_change_context};
+
 /**
  * @brief Prepares the graphics library class
  *
@@ -72,8 +112,8 @@
  *
  * @param freq frequency of SPI, not needed in most cases
  */
-GL::GL(uint8_t cs, uint16_t width, uint16_t height, int32_t freq)
-	: Display(cs, freq, width, height), texture_buffer(NULL), _w(width), _h(height), _cp437(false), wrap(false)
+GL::GL(uint8_t cs, uint16_t width, uint16_t height, int32_t freq) : Display(cs, freq, width, height),
+																	texture_buffer(NULL), _w(width), _h(height), _cp437(false), wrap(false)
 {
 	tex[0] = NULL;
 	tex[1] = NULL;
@@ -1230,4 +1270,15 @@ bool GL::blendSub(uint16_t x, uint16_t y, uint8_t bindingSource, uint8_t binding
 	}
 
 	return true;
+}
+
+/////////////////////////
+// ACTIVE OBJECT STUFF //
+/////////////////////////
+
+bool graphics_dispatcher(Event *ev, void *args)
+{
+	GL *gl = (GL *)args;
+
+	abstract_calls[ev->event_type](gl, ev);
 }

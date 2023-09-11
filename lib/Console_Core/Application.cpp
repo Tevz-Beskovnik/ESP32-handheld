@@ -20,6 +20,11 @@ void Application::set_kb(Keyboard *kb)
     Application::kb = kb;
 }
 
+void Application::set_active_object(Active *object)
+{
+    Application::object = object;
+}
+
 [[nodiscard]] const char *Application::get_name() const
 {
     return name;

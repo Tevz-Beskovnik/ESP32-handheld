@@ -21,6 +21,7 @@ TODO:
 #include <keyboard.hpp>
 #include <Application.hpp>
 #include <Console-UI.hpp>
+#include <Active-Object.h>
 
 #define CONSOLE_INTERFACE 0
 #define GAME_1 1
@@ -37,7 +38,11 @@ public:
 
     void loop();
 
+    void set_active_object(Active *object);
+
     bool add_application(Application *app);
+
+    GL *get_gfx() const;
 
 private:
     Application *apps[5];
