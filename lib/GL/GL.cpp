@@ -57,46 +57,6 @@
 	y = y >= _h ? _h - 1 : y; \
 	w = x + w > _w ? x + w - ((x + w) % _w) - x : w;
 
-void (*abstract_calls[38])(GL *, Event *) = {
-	ex_print,
-	ex_draw_char,
-	ex_set_cursor,
-	ex_font_size,
-	ex_text_color,
-	ex_background_color,
-	ex_font_wrap,
-	ex_draw_fast_raw_h_line,
-	ex_draw_line,
-	ex_draw_fast_raw_v_line,
-	ex_draw_rect,
-	ex_fill_rect,
-	ex_draw_triangle,
-	ex_fill_triangle,
-	ex_draw_circle,
-	ex_fill_circle,
-	ex_draw_line_d,
-	ex_draw_line_di,
-	ex_draw_rect_d,
-	ex_fill_rect_d,
-	ex_draw_triangle_d,
-	ex_fill_triangle_d,
-	ex_load_tile_map,
-	ex_load_tile_from_map,
-	ex_draw_tile_from_map,
-	ex_load_texture,
-	ex_allocate_texture,
-	ex_save_to_allocated,
-	ex_draw_texture,
-	ex_clear_texture,
-	ex_rotate_texture,
-	ex_crop_texture,
-	ex_crop_texture_to,
-	ex_invert_texture,
-	ex_blend_add,
-	ex_blend_sub,
-	ex_get_context,
-	ex_change_context};
-
 /**
  * @brief Prepares the graphics library class
  *
@@ -1280,5 +1240,183 @@ bool graphics_dispatcher(Event *ev, void *args)
 {
 	GL *gl = (GL *)args;
 
-	abstract_calls[ev->event_type](gl, ev);
+	switch (ev->event_type)
+	{
+	case PRINT:
+		gl->print((const char *)ev->misc);
+		break;
+
+	case DRAW_CHAR:
+		gl->drawChar((int16_t)ev->params[0], (int16_t)ev->params[1], (uint8_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint8_t)ev->params[5], (uint8_t)ev->params[6]);
+		break;
+
+	case SET_CURSOR:
+		gl->setCursor((uint16_t)ev->params[0], (uint16_t)ev->params[1]);
+		break;
+
+	case FONT_SIZE:
+		gl->fontSize((uint8_t)ev->params[0]);
+		break;
+
+	case TEXT_COLOR:
+		gl->textColor((uint8_t)ev->params[0]);
+		break;
+
+	case BACKGROUND_COLOR:
+		gl->textColorBackground((uint8_t)ev->params[0], (uint8_t)ev->params[1]);
+		break;
+
+	case FONT_WRAP:
+		gl->fontWrap((uint8_t)ev->params[0]);
+		break;
+
+	case DRAW_FAST_RAW_H_LINE:
+		gl->drawFastRawHLine((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint8_t)ev->params[3]);
+		break;
+
+	case DRAW_LINE:
+		gl->drawLine((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4]);
+		break;
+
+	case DRAW_FAST_RAW_V_LINE:
+		gl->drawFastRawVLine((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
+		break;
+
+	case DRAW_RECT:
+		gl->drawRect((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4]);
+		break;
+
+	case FILL_RECT:
+		gl->fillRect((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4]);
+		break;
+
+	case DRAW_TRIANGLE:
+		gl->drawTriangle((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint16_t)ev->params[5], (uint16_t)ev->params[6]);
+		break;
+
+	case FILL_TRIANGLE:
+		gl->fillTriangle((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint16_t)ev->params[5], (uint16_t)ev->params[6]);
+		break;
+
+	case DRAW_CIRCLE:
+		gl->drawCircle((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
+		break;
+
+	case FILL_CIRCLE:
+		gl->fillCircle((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
+		break;
+
+	case DRAW_LINE_D:
+		gl->drawLineD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
+		break;
+
+	case DRAW_LINE_DI:
+		gl->drawLineDI((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
+		break;
+
+	case DRAW_RECT_D:
+		gl->drawRectD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
+		break;
+
+	case FILL_RECT_D:
+		gl->fillRectD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
+		break;
+
+	case DRAW_TRIANGLE_D:
+		gl->drawTriangleD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint16_t)ev->params[5]);
+		break;
+
+	case FILL_TRIANGLE_D:
+		gl->fillTriangleD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint16_t)ev->params[5]);
+		break;
+
+	case LOAD_TILE_MAP:
+		gl->loadTileMap((uint8_t *)ev->misc, (uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
+		break;
+
+	case LOAD_TILE_FROM_MAP:
+		gl->loadTileFromMap((uint8_t)ev->params[0], (uint8_t)ev->params[1], (uint8_t)ev->params[2]);
+		break;
+
+	case DRAW_TILE_FROM_MAP:
+		gl->drawTileFromMap((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
+		break;
+
+	case LOAD_TEXTURE:
+		gl->loadTexture((uint8_t *)ev->misc, (uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (bool)ev->params[3]);
+		break;
+
+	case ALLOCATE_TEXTURE:
+		gl->allocateTexture((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2]);
+		break;
+
+	case SAVE_TO_ALLOCATED:
+		gl->saveToAllocated((uint8_t *)ev->misc, (uint8_t)ev->params[0]);
+		break;
+
+	case DRAW_TEXTURE:
+		gl->drawTexture((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2]);
+		break;
+
+	case CLEAR_TEXTURE:
+		gl->clearTexture((uint8_t)ev->params[0]);
+		break;
+
+	case ROTATE_TEXTURE:
+		gl->rotateTexture((uint8_t)ev->params[0], (uint8_t)ev->params[1]);
+		break;
+
+	case CROP_TEXTURE:
+		gl->cropTexture((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint8_t)ev->params[4]);
+		break;
+
+	case CROP_TEXTURE_TO:
+		gl->cropTextureTo((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint8_t)ev->params[4], (uint8_t)ev->params[5]);
+		break;
+
+	case INVERT_TEXTURE:
+		gl->invertTexture((uint16_t)ev->params[0]);
+		break;
+
+	case BLEND_ADD:
+		gl->blendAdd((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
+		break;
+
+	case BLEND_SUB:
+		gl->blendSub((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
+		break;
+
+	case GET_CONTEXT:
+	{
+		uint8_t **ptr = (uint8_t **)ev->misc;
+
+		*ptr = gl->getContext();
+		break;
+	}
+
+	case CHANGE_CONTEXT:
+	{
+		uint8_t **ptr = (uint8_t **)ev->misc;
+
+		*ptr = gl->changeContext((uint8_t)ev->params[0]);
+		break;
+	}
+
+	case REFRESH:
+		gl->refresh();
+		break;
+
+	case REFRESH_LINES:
+		gl->refresh((uint8_t)ev->params[0]);
+		break;
+
+	case CLEAR_DISPLAY_BUFFER:
+		gl->clearDisplayBuffer();
+		break;
+
+	case PRINT_LN:
+		gl->println((const char *)ev->misc);
+		break;
+	}
+	return true;
 }

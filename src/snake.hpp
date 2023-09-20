@@ -35,14 +35,34 @@ public:
 
     void setup() override
     {
-        gfx->loadTileMap(sprites, 32, 32, 16, 16);     // load tile map
-        gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_0); // save the snake head to textures becouse they will be rotated
-        gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_1);
-        gfx->rotateTexture(TEXTURE_BINDING_1, ROTATE_90);
-        gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_2);
-        gfx->rotateTexture(TEXTURE_BINDING_2, ROTATE_180);
-        gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_3);
-        gfx->rotateTexture(TEXTURE_BINDING_3, ROTATE_270);
+        Event ev;
+        ev.event_type = LOAD_TILE_MAP;
+        ev.params[0] = 32;
+        ev.params[1] = 32;
+        ev.params[2] = 16;
+        ev.params[3] = 16;
+        active_object_post(object, ev); // load tile map
+        gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_0);
+        ev.event_type = LOAD_TILE_FROM_MAP;
+        ev.params[0] = 0;
+        ev.params[1] = 0;
+        ev.params[2] = TEXTURE_BINDING_0;
+        active_object_post(object, ev); // save the snake head to textures becouse they will be rotated
+        ev.params[2] = TEXTURE_BINDING_1;
+        active_object_post(object, ev);
+        ev.params[2] = TEXTURE_BINDING_2;
+        active_object_post(object, ev);
+        ev.params[2] = TEXTURE_BINDING_3;
+        active_object_post(object, ev);
+        ev.params[0] = TEXTURE_BINDING_1;
+        ev.params[1] = ROTATE_90;
+        active_object_post(object, ev);
+        ev.params[0] = TEXTURE_BINDING_2;
+        ev.params[1] = ROTATE_180;
+        active_object_post(object, ev);
+        ev.params[0] = TEXTURE_BINDING_3;
+        ev.params[1] = ROTATE_270;
+        active_object_post(object, ev);
 
         apple.x = (uint16_t)(esp_random() % 23);
         apple.y = (uint16_t)(esp_random() % 13);
@@ -57,6 +77,8 @@ public:
 
     bool loop() override
     {
+        Event ev;
+
         if (game_over)
             return false;
         if (is_pressed(BUTTON_DOWN_ID) && travel_dir_v != UP)
@@ -87,21 +109,47 @@ public:
         if (refresh_counter == 15000)
         {
             refresh_counter = 0;
-            gfx->clearDisplayBuffer();
+            ev.event_type = CLEAR_DISPLAY_BUFFER;
+            active_object_post(object, ev);
 
-            gfx->fillRect(0, 0, 400, 16, BLACK); // draw black borders
-            gfx->fillRect(0, 16, 16, 208, BLACK);
-            gfx->fillRect(384, 16, 16, 208, BLACK);
-            gfx->fillRect(0, 224, 400, 16, BLACK);
+            // this can be done better
+            ev.event_type = FILL_RECT;
+            ev.params[0] = 0;
+            ev.params[1] = 0;
+            ev.params[2] = 400;
+            ev.params[3] = 16;
+            ev.params[4] = BLACK;
+            active_object_post(object, ev);
+            ev.params[1] = 16;
+            ev.params[2] = 16;
+            ev.params[3] = 208;
+            active_object_post(object, ev);
+            ev.params[0] = 384;
+            ev.params[3] = 208;
+            active_object_post(object, ev);
+            ev.params[0] = 0;
+            ev.params[1] = 224;
+            ev.params[2] = 400;
+            ev.params[3] = 16;
+            active_object_post(object, ev);
             gfx->setCursor(16, 0);
             gfx->textColor(WHITE);
             gfx->printf("Score: %d", snake_length - 3);
 
-            gfx->drawTileFromMap(16 + apple.x * 16, 16 + apple.y * 16, 1, 0);
+            ev.event_type = DRAW_TILE_FROM_MAP;
+            ev.params[0] = 16 + apple.x * 16;
+            ev.params[1] = 16 + apple.y * 16;
+            ev.params[2] = 1;
+            ev.params[3] = 0;
+            active_object_post(object, ev);
 
             for (uint16_t i = snake_length - 1; i > 0; i--)
             {
-                gfx->drawTileFromMap(16 + snake[i].x * 16, 16 + snake[i].y * 16, 0, 1);
+                ev.params[0] = 16 + snake[i].x * 16;
+                ev.params[1] = 16 + snake[i].y * 16;
+                ev.params[2] = 0;
+                ev.params[3] = 1;
+                active_object_post(object, ev);
                 if (travel_dir_h != 0 || travel_dir_v != 0)
                 {
                     snake[i].x = snake[i - 1].x;
@@ -117,11 +165,17 @@ public:
 
             game_over = checkCollisions();
 
-            gfx->drawTexture(16 + snake[0].x * 16, 16 + snake[0].y * 16, head_rotation);
+            ev.event_type = DRAW_TEXTURE;
+            ev.params[0] = 16 + snake[0].x * 16;
+            ev.params[1] = 16 + snake[0].y * 16;
+            ev.params[2] = head_rotation;
+            active_object_post(object, ev);
+
             snake[0].x += travel_dir_h;
             snake[0].y += travel_dir_v;
 
-            gfx->refresh();
+            ev.event_type = REFRESH;
+            active_object_post(object, ev);
         }
         refresh_counter++;
 

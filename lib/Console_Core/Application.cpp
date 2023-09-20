@@ -4,6 +4,8 @@ GL *Application::gfx = nullptr;
 
 Keyboard *Application::kb = nullptr;
 
+Active *Application::object = nullptr;
+
 Application::Application(const char *name)
     : name(name)
 {

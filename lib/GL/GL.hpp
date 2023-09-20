@@ -170,236 +170,47 @@ private:
 
 // graphics events
 #define PRINT 0
-void ex_print(GL *gl, Event *ev)
-{
-    gl->print((const char *)ev->misc);
-}
-
 #define DRAW_CHAR 1
-void ex_draw_char(GL *gl, Event *ev)
-{
-    gl->drawChar((int16_t)ev->params[0], (int16_t)ev->params[1], (uint8_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint8_t)ev->params[5], (uint8_t)ev->params[6]);
-}
-
 #define SET_CURSOR 2
-void ex_set_cursor(GL *gl, Event *ev)
-{
-    gl->setCursor((uint16_t)ev->params[0], (uint16_t)ev->params[1]);
-}
-
 #define FONT_SIZE 3
-void ex_font_size(GL *gl, Event *ev)
-{
-    gl->fontSize((uint8_t)ev->params[0]);
-}
-
 #define TEXT_COLOR 4
-void ex_text_color(GL *gl, Event *ev)
-{
-    gl->textColor((uint8_t)ev->params[0]);
-}
-
 #define BACKGROUND_COLOR 5
-void ex_background_color(GL *gl, Event *ev)
-{
-    gl->textColorBackground((uint8_t)ev->params[0], (uint8_t)ev->params[1]);
-}
-
 #define FONT_WRAP 6
-void ex_font_wrap(GL *gl, Event *ev)
-{
-    gl->fontWrap((uint8_t)ev->params[0]);
-}
-
 #define DRAW_FAST_RAW_H_LINE 7
-void ex_draw_fast_raw_h_line(GL *gl, Event *ev)
-{
-    gl->drawFastRawHLine((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint8_t)ev->params[3]);
-}
-
 #define DRAW_LINE 8
-void ex_draw_line(GL *gl, Event *ev)
-{
-    gl->drawLine((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4]);
-}
-
 #define DRAW_FAST_RAW_V_LINE 9
-void ex_draw_fast_raw_v_line(GL *gl, Event *ev)
-{
-    gl->drawFastRawVLine((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
-}
-
 #define DRAW_RECT 10
-void ex_draw_rect(GL *gl, Event *ev)
-{
-    gl->drawRect((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4]);
-}
-
 #define FILL_RECT 11
-void ex_fill_rect(GL *gl, Event *ev)
-{
-    gl->fillRect((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4]);
-}
-
 #define DRAW_TRIANGLE 12
-void ex_draw_triangle(GL *gl, Event *ev)
-{
-    gl->drawTriangle((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint16_t)ev->params[5], (uint16_t)ev->params[6]);
-}
-
 #define FILL_TRIANGLE 13
-void ex_fill_triangle(GL *gl, Event *ev)
-{
-    gl->fillTriangle((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint16_t)ev->params[5], (uint16_t)ev->params[6]);
-}
-
 #define DRAW_CIRCLE 14
-void ex_draw_circle(GL *gl, Event *ev)
-{
-    gl->drawCircle((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
-}
-
 #define FILL_CIRCLE 15
-void ex_fill_circle(GL *gl, Event *ev)
-{
-    gl->fillCircle((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
-}
-
 #define DRAW_LINE_D 16
-void ex_draw_line_d(GL *gl, Event *ev)
-{
-    gl->drawLineD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
-}
-
 #define DRAW_LINE_DI 17
-void ex_draw_line_di(GL *gl, Event *ev)
-{
-    gl->drawLineDI((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
-}
-
 #define DRAW_RECT_D 18
-void ex_draw_rect_d(GL *gl, Event *ev)
-{
-    gl->drawRectD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
-}
-
 #define FILL_RECT_D 19
-void ex_fill_rect_d(GL *gl, Event *ev)
-{
-    gl->fillRectD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3]);
-}
-
 #define DRAW_TRIANGLE_D 20
-void ex_draw_triangle_d(GL *gl, Event *ev)
-{
-    gl->drawTriangleD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint16_t)ev->params[5]);
-}
-
 #define FILL_TRIANGLE_D 21
-void ex_fill_triangle_d(GL *gl, Event *ev)
-{
-    gl->fillTriangleD((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint16_t)ev->params[4], (uint16_t)ev->params[5]);
-}
-
 #define LOAD_TILE_MAP 22
-void ex_load_tile_map(GL *gl, Event *ev)
-{
-    gl->loadTileMap((uint8_t *)ev->misc, (uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
-}
-
 #define LOAD_TILE_FROM_MAP 23
-void ex_load_tile_from_map(GL *gl, Event *ev)
-{
-    gl->loadTileFromMap((uint8_t)ev->params[0], (uint8_t)ev->params[1], (uint8_t)ev->params[2]);
-}
-
 #define DRAW_TILE_FROM_MAP 24
-void ex_draw_tile_from_map(GL *gl, Event *ev)
-{
-    gl->drawTileFromMap((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
-}
-
 #define LOAD_TEXTURE 25
-void ex_load_texture(GL *gl, Event *ev)
-{
-    gl->loadTexture((uint8_t *)ev->misc, (uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (bool)ev->params[3]);
-}
-
 #define ALLOCATE_TEXTURE 26
-void ex_allocate_texture(GL *gl, Event *ev)
-{
-    gl->allocateTexture((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2]);
-}
-
 #define SAVE_TO_ALLOCATED 27
-void ex_save_to_allocated(GL *gl, Event *ev)
-{
-    gl->saveToAllocated((uint8_t *)ev->misc, (uint8_t)ev->params[0]);
-}
-
 #define DRAW_TEXTURE 28
-void ex_draw_texture(GL *gl, Event *ev)
-{
-    gl->drawTexture((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2]);
-}
-
 #define CLEAR_TEXTURE 29
-void ex_clear_texture(GL *gl, Event *ev)
-{
-    gl->clearTexture((uint8_t)ev->params[0]);
-}
-
 #define ROTATE_TEXTURE 30
-void ex_rotate_texture(GL *gl, Event *ev)
-{
-    gl->rotateTexture((uint8_t)ev->params[0], (uint8_t)ev->params[1]);
-}
-
 #define CROP_TEXTURE 31
-void ex_crop_texture(GL *gl, Event *ev)
-{
-    gl->cropTexture((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint8_t)ev->params[4]);
-}
-
 #define CROP_TEXTURE_TO 32
-void ex_crop_texture_to(GL *gl, Event *ev)
-{
-    gl->cropTextureTo((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint16_t)ev->params[2], (uint16_t)ev->params[3], (uint8_t)ev->params[4], (uint8_t)ev->params[5]);
-}
-
 #define INVERT_TEXTURE 33
-void ex_invert_texture(GL *gl, Event *ev)
-{
-    gl->invertTexture((uint16_t)ev->params[0]);
-}
-
 #define BLEND_ADD 34
-void ex_blend_add(GL *gl, Event *ev)
-{
-    gl->blendAdd((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
-}
-
 #define BLEND_SUB 35
-void ex_blend_sub(GL *gl, Event *ev)
-{
-    gl->blendSub((uint16_t)ev->params[0], (uint16_t)ev->params[1], (uint8_t)ev->params[2], (uint8_t)ev->params[3]);
-}
-
 #define GET_CONTEXT 36
-void ex_get_context(GL *gl, Event *ev)
-{
-    uint8_t **ptr = (uint8_t **)ev->misc;
-
-    *ptr = gl->getContext();
-}
-
 #define CHANGE_CONTEXT 37
-void ex_change_context(GL *gl, Event *ev)
-{
-    uint8_t **ptr = (uint8_t **)ev->misc;
-
-    *ptr = gl->changeContext((uint8_t)ev->params[0]);
-}
+#define REFRESH 38
+#define REFRESH_LINES 39
+#define CLEAR_DISPLAY_BUFFER 40
+#define PRINT_LN 41
 
 bool graphics_dispatcher(Event *ev, void *args);
 

@@ -24,49 +24,195 @@ void ConsoleUI::add_name(const char *name)
 
 void ConsoleUI::setup()
 {
-    gfx->loadTexture(controlsSprite, 96, 96, TEXTURE_BINDING_0);
+    Event ev;
+    ev.event_type = LOAD_TEXTURE;
+    ev.misc = controlsSprite;
+    ev.params[0] = 96;
+    ev.params[1] = 96;
+    ev.params[2] = TEXTURE_BINDING_0;
+    active_object_post(object, ev);
+    // gfx->loadTexture(controlsSprite, 96, 96, TEXTURE_BINDING_0);
 
-    gfx->clearDisplayBuffer();
+    ev.event_type = CLEAR_DISPLAY_BUFFER;
+    active_object_post(object, ev);
+    // gfx->clearDisplayBuffer();
 
-    gfx->allocateTexture(400, 240, TEXTURE_BINDING_1);
-    gfx->changeContext(TEXTURE_BINDING_1);
+    ev.event_type = ALLOCATE_TEXTURE;
+    ev.params[0] = 400;
+    ev.params[1] = 240;
+    ev.params[0] = TEXTURE_BINDING_1;
+    active_object_post(object, ev);
+    // gfx->allocateTexture(400, 240, TEXTURE_BINDING_1);
 
-    gfx->fillRect(0, 0, 400, 240, WHITE);
-    gfx->fillRectD(4, 4, 390, 230);
-    gfx->fillRect(9, 9, 380, 220, BLACK);
-    gfx->fillRectD(4, 4, 110, 20);
-    gfx->fillRect(0, 0, 110, 20, WHITE);
-    gfx->fillTriangleD(99, 23, 114, 24, 114, 9);
-    gfx->fillTriangle(104, 24, 114, 25, 115, 14, BLACK);
-    gfx->setCursor(20, 8);
-    gfx->fontSize(1);
-    gfx->textColor(BLACK);
-    gfx->print("ESP-SHITBOARD");
+    ev.event_type = CHANGE_CONTEXT;
+    ev.params[0] = TEXTURE_BINDING_1;
+    active_object_post(object, ev);
+    // gfx->changeContext(TEXTURE_BINDING_1);
 
-    gfx->fillRect(19, 34, 120, 186, WHITE);
-    gfx->setCursor(28, 40);
-    gfx->fontSize(2);
-    gfx->print("Controls:");
-    gfx->drawTexture(25, 60, TEXTURE_BINDING_0);
-    gfx->setCursor(22, 140);
-    gfx->println("Arrow key:");
-    gfx->setCursor(25, 156);
-    gfx->println("Selection");
-    gfx->setCursor(22, 178);
-    gfx->println("A button:");
-    gfx->setCursor(25, 194);
-    gfx->print("Confirm");
+    ev.event_type = FILL_RECT;
+    ev.params[0] = 0;
+    ev.params[1] = 0;
+    ev.params[2] = 400;
+    ev.params[3] = 240;
+    ev.params[4] = WHITE;
+    active_object_post(object, ev);
+    // gfx->fillRect(0, 0, 400, 240, WHITE);
+    ev.event_type = FILL_RECT_D;
+    ev.params[0] = 4;
+    ev.params[1] = 4;
+    ev.params[2] = 390;
+    ev.params[3] = 230;
+    active_object_post(object, ev);
+    // gfx->fillRectD(4, 4, 390, 230);
+    ev.event_type = FILL_RECT;
+    ev.params[0] = 9;
+    ev.params[1] = 9;
+    ev.params[2] = 380;
+    ev.params[3] = 220;
+    ev.params[4] = BLACK;
+    active_object_post(object, ev);
+    // gfx->fillRect(9, 9, 380, 220, BLACK);
+    ev.event_type = FILL_RECT_D;
+    ev.params[0] = 4;
+    ev.params[1] = 4;
+    ev.params[2] = 110;
+    ev.params[3] = 20;
+    active_object_post(object, ev);
+    // gfx->fillRectD(4, 4, 110, 20);
+    ev.event_type = FILL_RECT;
+    ev.params[0] = 0;
+    ev.params[1] = 0;
+    ev.params[2] = 110;
+    ev.params[3] = 20;
+    ev.params[4] = WHITE;
+    active_object_post(object, ev);
+    // gfx->fillRect(0, 0, 110, 20, WHITE);
+    ev.event_type = FILL_TRIANGLE_D;
+    ev.params[0] = 99;
+    ev.params[1] = 23;
+    ev.params[2] = 114;
+    ev.params[3] = 24;
+    ev.params[4] = 114;
+    ev.params[5] = 9;
+    active_object_post(object, ev);
+    // gfx->fillTriangleD(99, 23, 114, 24, 114, 9);
+    ev.event_type = FILL_TRIANGLE;
+    ev.params[0] = 104;
+    ev.params[1] = 24;
+    ev.params[2] = 114;
+    ev.params[3] = 25;
+    ev.params[4] = 115;
+    ev.params[5] = 14;
+    ev.params[6] = BLACK;
+    active_object_post(object, ev);
+    // gfx->fillTriangle(104, 24, 114, 25, 115, 14, BLACK);
+    ev.event_type = SET_CURSOR;
+    ev.params[0] = 20;
+    ev.params[1] = 8;
+    active_object_post(object, ev);
+    // gfx->setCursor(20, 8);
+    ev.event_type = FONT_SIZE;
+    ev.params[0] = 1;
+    active_object_post(object, ev);
+    // gfx->fontSize(1);
+    ev.event_type = TEXT_COLOR;
+    ev.params[0] = BLACK;
+    active_object_post(object, ev);
+    // gfx->textColor(BLACK);
+    ev.event_type = PRINT;
+    ev.misc = (void *)"ESP-SHITBOARD";
+    active_object_post(object, ev);
+    // gfx->print("ESP-SHITBOARD");
 
-    gfx->setCursor(150, 35);
-    gfx->textColor(WHITE);
-    gfx->print("Applications:");
+    ev.event_type = FILL_RECT;
+    ev.params[0] = 19;
+    ev.params[1] = 34;
+    ev.params[2] = 120;
+    ev.params[3] = 186;
+    ev.params[4] = WHITE;
+    active_object_post(object, ev);
+    // gfx->fillRect(19, 34, 120, 186, WHITE);
+    ev.event_type = SET_CURSOR;
+    ev.params[0] = 28;
+    ev.params[1] = 40;
+    active_object_post(object, ev);
+    // gfx->setCursor(28, 40);
+    ev.event_type = FONT_SIZE;
+    ev.params[0] = 2;
+    active_object_post(object, ev);
+    // gfx->fontSize(2);
+    ev.event_type = PRINT;
+    ev.misc = (void *)"Controls:";
+    active_object_post(object, ev);
+    // gfx->print("Controls:");
+    ev.event_type = DRAW_TEXTURE;
+    ev.params[0] = 25;
+    ev.params[1] = 60;
+    ev.params[2] = TEXTURE_BINDING_0;
+    active_object_post(object, ev);
+    // gfx->drawTexture(25, 60, TEXTURE_BINDING_0);
+    ev.event_type = SET_CURSOR;
+    ev.params[0] = 22;
+    ev.params[1] = 140;
+    active_object_post(object, ev);
+    // gfx->setCursor(22, 140);
+    ev.event_type = PRINT_LN;
+    ev.misc = (void *)"Arrow key:";
+    active_object_post(object, ev);
+    // gfx->println("Arrow key:");
+    ev.event_type = SET_CURSOR;
+    ev.params[0] = 25;
+    ev.params[1] = 156;
+    active_object_post(object, ev);
+    // gfx->setCursor(25, 156);
+    ev.event_type = PRINT_LN;
+    ev.misc = (void *)"Selection";
+    active_object_post(object, ev);
+    // gfx->println("Selection");
+    ev.event_type = SET_CURSOR;
+    ev.params[0] = 22;
+    ev.params[1] = 178;
+    active_object_post(object, ev);
+    // gfx->setCursor(22, 178);
+    ev.event_type = PRINT_LN;
+    ev.misc = (void *)"A button:";
+    active_object_post(object, ev);
+    // gfx->println("A button:");
+    ev.event_type = SET_CURSOR;
+    ev.params[0] = 25;
+    ev.params[1] = 194;
+    active_object_post(object, ev);
+    // gfx->setCursor(25, 194);
+    ev.event_type = PRINT;
+    ev.misc = (void *)"Confirm";
+    active_object_post(object, ev);
+    // gfx->print("Confirm");
 
-    gfx->changeContext(CONTEXT_BUFFER);
+    ev.event_type = SET_CURSOR;
+    ev.params[0] = 150;
+    ev.params[1] = 35;
+    active_object_post(object, ev);
+    // gfx->setCursor(150, 35);
+    ev.event_type = TEXT_COLOR;
+    ev.params[0] = WHITE;
+    active_object_post(object, ev);
+    // gfx->textColor(WHITE);
+    ev.event_type = PRINT;
+    ev.misc = (void *)"Applications:";
+    active_object_post(object, ev);
+    // gfx->print("Applications:");
+
+    ev.event_type = CHANGE_CONTEXT;
+    active_object_post(object, ev);
+    // gfx->changeContext(CONTEXT_BUFFER);
 }
 
 bool ConsoleUI::loop()
 {
-    gfx->clearDisplayBuffer();
+    Event ev;
+    ev.event_type = CLEAR_DISPLAY_BUFFER;
+    active_object_post(object, ev);
+    // gfx->clearDisplayBuffer();
 
     if (selected_game > 0 && is_pressed_sticky(BUTTON_UP_ID))
     {
@@ -84,20 +230,33 @@ bool ConsoleUI::loop()
         return false;
     }
 
-    gfx->drawTexture(0, 0, TEXTURE_BINDING_1);
+    ev.event_type = DRAW_TEXTURE;
+    ev.params[0] = 0;
+    ev.params[1] = 0;
+    ev.params[2] = TEXTURE_BINDING_1;
+    active_object_post(object, ev);
+    // gfx->drawTexture(0, 0, TEXTURE_BINDING_1);
 
     for (uint8_t i = 0; i < number_of_games; i++)
     {
         gameButton(gfx, selected_game == i ? BLACK : WHITE, (const char *)game_names[i], i);
     }
 
-    gfx->refresh();
+    ev.event_type = REFRESH;
+    active_object_post(object, ev);
+    // gfx->refresh();
 
     return true;
 }
 
 void ConsoleUI::cleanup()
 {
-    gfx->clearTexture(TEXTURE_BINDING_0);
-    gfx->clearTexture(TEXTURE_BINDING_1);
+    Event ev;
+    ev.event_type = CLEAR_TEXTURE;
+    ev.params[0] = TEXTURE_BINDING_0;
+    active_object_post(object, ev);
+    // gfx->clearTexture(TEXTURE_BINDING_0);
+    ev.params[0] = TEXTURE_BINDING_1;
+    active_object_post(object, ev);
+    // gfx->clearTexture(TEXTURE_BINDING_1);
 }

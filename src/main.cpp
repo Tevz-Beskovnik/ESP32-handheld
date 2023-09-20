@@ -25,14 +25,14 @@ void setup(void)
   object.dispatcher = graphics_dispatcher;
   object.params = console.get_gfx();
   object.task_name = "Graphics";
-  object.queue = xQueueCreate(20, sizeof(Event));
+  object.queue = xQueueCreate(30, sizeof(Event));
 
   active_object_start(&object);
 
   console.set_active_object(&object);
 
   console.add_application(new Game1());
-  console.add_application(new Deauther());
+  console.add_application(new Game2());
   console.add_application(new Snake());
 
   Serial.println("Texture loaded");
