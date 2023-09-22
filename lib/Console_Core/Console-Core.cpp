@@ -55,6 +55,11 @@ void Console::loop()
     }
 }
 
+void Console::set_active_object(Active *object)
+{
+    Application::set_active_object(object);
+}
+
 bool Console::add_application(Application *app)
 {
     if (number_of_games == 5)
@@ -65,4 +70,9 @@ bool Console::add_application(Application *app)
     console_UI->add_name(app->get_name());
 
     return true;
+}
+
+GL *Console::get_gfx() const
+{
+    return gfx;
 }
