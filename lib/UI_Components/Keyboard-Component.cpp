@@ -1,4 +1,4 @@
-#include <Keyboard.hpp>
+#include <Keyboard-Component.hpp>
 
 Keyboard::Keyboard(GL *gfx)
     : gl(gfx), input(255)

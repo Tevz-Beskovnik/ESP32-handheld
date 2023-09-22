@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Keyboard.hpp>
+#include <Keyboard-Component.hpp>
 #include <Active-Object.hpp>
 #include <GL.hpp>
 

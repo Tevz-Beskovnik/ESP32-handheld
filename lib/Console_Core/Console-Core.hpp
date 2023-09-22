@@ -18,7 +18,7 @@ TODO:
 #include <Console-IO.hpp>
 #include <FreeRTOSConfig.h>
 #include <SPI_driver.hpp>
-#include <Keyboard.hpp>
+#include <Keyboard-Component.hpp>
 #include <Application.hpp>
 #include <Console-UI.hpp>
 #include <Active-Object.hpp>
