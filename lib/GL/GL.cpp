@@ -911,54 +911,77 @@ void GL::clearTexture(uint8_t textureBinding)
   dynamicTex[textureBinding] = false;
 }
 
-// segment rotation
-void rotate90deg(const uint8_t *in, uint8_t *out, uint16_t w, uint16_t x, uint16_t y)
+/// @brief function that converts a bitfield image to a matrix stored in a 1D array
+/// @param bitfield the actual bitfield image
+/// @param w image width
+/// @param h image height
+/// @return returns 1D array of the matrix
+uint8_t *convert_to_matrix(uint8_t *bitfield, uint16_t w, uint16_t h)
 {
-  memset(out, 0, 8);
-  for (uint8_t i = 0; i < 8; i++)
+  uint8_t *matrix = (uint8_t *)malloc(w * h);
+
+  for (uint16_t x = 0; x < w; x++)
   {
-    printf("%i, %i, %i\n", w * y, x, w / 8 * i);
-    *(out) |= MASK_1_BIT((in + w * y + x + w / 8 * i), i);
-    *(out + 1) |= MASK_2_BIT((in + w * y + x + w / 8 * i), i);
-    *(out + 2) |= MASK_3_BIT((in + w * y + x + w / 8 * i), i);
-    *(out + 3) |= MASK_4_BIT((in + w * y + x + w / 8 * i), i);
-    *(out + 4) |= MASK_5_BIT((in + w * y + x + w / 8 * i), i);
-    *(out + 5) |= MASK_6_BIT((in + w * y + x + w / 8 * i), i);
-    *(out + 6) |= MASK_7_BIT((in + w * y + x + w / 8 * i), i);
-    *(out + 7) |= MASK_8_BIT((in + w * y + x + w / 8 * i), i);
+    for (uint16_t y = 0; y < h; y++)
+    {
+      matrix[y * w + x] = (bitfield[y * (w / 8) + (x / 8)] & (128 >> (x % 8))) << (x % 8) >> 7;
+    }
+  }
+
+  return matrix;
+}
+
+/// @brief convert matrix stored in 1D array back to bitfield
+/// @param in pointer to 1D matrix array
+/// @param out pointer to the outgoing bitfield
+/// @param w image width
+/// @param h image height
+void convert_to_bitmap(uint8_t *in, uint8_t *out, uint16_t w, uint16_t h)
+{
+  for (uint16_t y = 0; y < h; y++)
+  {
+    uint8_t row_slice = 0;
+    for (uint16_t x = 0; x < w; x++)
+    {
+      row_slice <<= 1;
+      row_slice |= in[y * w + x];
+
+      if (x != 0 && (x + 1) % 8 == 0)
+      {
+        out[y * (w / 8) + x / 8] = row_slice;
+        row_slice = 0;
+      }
+    }
   }
 }
 
-/*
-  TODO:
-    - rotation doesnt work
-    - look at how textures order bit chunks in game1.hpp
-    - fix: organise the chunks in correct order then rotate them
-      and store them in the reverse order again like in game1.hpp's texture
-*/
-// texture rotation
-void rotateBitmap(uint16_t w, uint16_t h, uint8_t *buffer, uint8_t *out)
+void reverseColumns(uint8_t *arr, uint16_t w)
 {
-  memset(out, 0, w * h / 8);
-  for (uint8_t i = 0; i < h / 8; i++)
-  {
-    for (uint8_t j = 0; j < w / 8; j++)
+  for (uint16_t i = 0; i < w; i++)
+    for (uint16_t j = 0, k = w - 1; j < k; j++, k--)
     {
-      uint8_t *outS = (uint8_t *)malloc(8);
-      memset(outS, 0, 8);
-      rotate90deg(buffer, outS, w, j, i);
-      uint8_t newY = (w / 8 - 1 - j);
-      uint8_t newX = i;
-      *(out + newY * w + newX) = outS[0];
-      *(out + newY * w + newX + w / 8) = outS[1];
-      *(out + newY * w + newX + 2 * (w / 8)) = outS[2];
-      *(out + newY * w + newX + 3 * (w / 8)) = outS[3];
-      *(out + newY * w + newX + 4 * (w / 8)) = outS[4];
-      *(out + newY * w + newX + 5 * (w / 8)) = outS[5];
-      *(out + newY * w + newX + 6 * (w / 8)) = outS[6];
-      *(out + newY * w + newX + 7 * (w / 8)) = outS[7];
+      uint8_t temp = arr[j * w + i];
+      arr[j * w + i] = arr[k * w + i];
+      arr[k * w + i] = temp;
     }
-  }
+}
+
+// Function for do transpose of matrix
+void transpose(uint8_t *arr, uint16_t w, uint16_t h)
+{
+  for (uint16_t i = 0; i < w; i++)
+    for (uint16_t j = i; j < h; j++)
+    {
+      uint8_t temp = arr[j * w + i];
+      arr[j * w + i] = arr[i * w + j];
+      arr[i * w + j] = temp;
+    }
+}
+
+void rotate90(uint8_t *arr, uint16_t w, uint16_t h)
+{
+  transpose(arr, w, h);
+  reverseColumns(arr, w);
 }
 
 /**
@@ -970,7 +993,37 @@ void rotateBitmap(uint16_t w, uint16_t h, uint8_t *buffer, uint8_t *out)
  */
 void GL::rotateTexture(uint8_t textureBinding, uint8_t rotation)
 {
-  uint8_t *texture = (uint8_t *)malloc(w[textureBinding] * h[textureBinding]);
+  switch (rotation)
+  {
+  case ROTATE_90:
+  {
+    uint8_t *matrix = convert_to_matrix(tex[textureBinding], w[textureBinding], h[textureBinding]);
+    rotate90(matrix, w[textureBinding], h[textureBinding]);
+    convert_to_bitmap(matrix, tex[textureBinding], w[textureBinding], h[textureBinding]);
+    free(matrix);
+    break;
+  }
+  case ROTATE_180:
+  {
+    uint8_t *matrix = convert_to_matrix(tex[textureBinding], w[textureBinding], h[textureBinding]);
+    rotate90(matrix, w[textureBinding], h[textureBinding]);
+    rotate90(matrix, w[textureBinding], h[textureBinding]);
+    convert_to_bitmap(matrix, tex[textureBinding], w[textureBinding], h[textureBinding]);
+    free(matrix);
+    break;
+  }
+  case ROTATE_270:
+  {
+    uint8_t *matrix = convert_to_matrix(tex[textureBinding], w[textureBinding], h[textureBinding]);
+    rotate90(matrix, w[textureBinding], h[textureBinding]);
+    rotate90(matrix, w[textureBinding], h[textureBinding]);
+    rotate90(matrix, w[textureBinding], h[textureBinding]);
+    convert_to_bitmap(matrix, tex[textureBinding], w[textureBinding], h[textureBinding]);
+    free(matrix);
+    break;
+  }
+  }
+  /*uint8_t *texture = (uint8_t *)malloc(w[textureBinding] * h[textureBinding]);
   uint8_t *texture1 = (uint8_t *)malloc(w[textureBinding] * h[textureBinding]);
   uint16_t width = w[textureBinding];
   uint16_t height = h[textureBinding];
@@ -1009,7 +1062,7 @@ void GL::rotateTexture(uint8_t textureBinding, uint8_t rotation)
     free(texture1);
     break;
   }
-  return;
+  return;*/
 }
 
 /**
@@ -1344,6 +1397,19 @@ bool graphics_dispatcher(Event *ev, void *args)
   case PRINT_LN:
     gl->println((const char *)ev->misc);
     break;
+
+  case PRINTF1:
+    gl->printf((const char *)ev->misc, ev->params[0]);
+    break;
+
+  case PRINTF2:
+    gl->printf((const char *)ev->misc, ev->params[0], ev->params[1]);
+    break;
+
+  case PRINTF3:
+    gl->printf((const char *)ev->misc, ev->params[0], ev->params[1], ev->params[2]);
+    break;
   }
+
   return true;
 }

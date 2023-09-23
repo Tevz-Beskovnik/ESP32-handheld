@@ -37,12 +37,13 @@ public:
     {
         Event ev;
         ev.event_type = LOAD_TILE_MAP;
+        ev.misc = (void *)sprites;
         ev.params[0] = 32;
         ev.params[1] = 32;
         ev.params[2] = 16;
         ev.params[3] = 16;
         active_object_post(object, ev); // load tile map
-        gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_0);
+        // gfx->loadTileFromMap(0, 0, TEXTURE_BINDING_0);
         ev.event_type = LOAD_TILE_FROM_MAP;
         ev.params[0] = 0;
         ev.params[1] = 0;
@@ -54,6 +55,7 @@ public:
         active_object_post(object, ev);
         ev.params[2] = TEXTURE_BINDING_3;
         active_object_post(object, ev);
+        ev.event_type = ROTATE_TEXTURE;
         ev.params[0] = TEXTURE_BINDING_1;
         ev.params[1] = ROTATE_90;
         active_object_post(object, ev);
@@ -78,6 +80,8 @@ public:
     bool loop() override
     {
         Event ev;
+
+        // Serial.println("HELLO");
 
         if (game_over)
             return false;
@@ -131,9 +135,18 @@ public:
             ev.params[2] = 400;
             ev.params[3] = 16;
             active_object_post(object, ev);
-            gfx->setCursor(16, 0);
-            gfx->textColor(WHITE);
-            gfx->printf("Score: %d", snake_length - 3);
+            ev.event_type = SET_CURSOR;
+            ev.params[0] = 16;
+            ev.params[1] = 0;
+            active_object_post(object, ev);
+            ev.event_type = TEXT_COLOR;
+            ev.params[0] = WHITE;
+            active_object_post(object, ev);
+            ev.event_type = PRINTF1;
+            ev.misc = (void *)"Score: %d";
+            ev.params[0] = snake_length - 3;
+            active_object_post(object, ev);
+            // gfx->printf("Score: %d", snake_length - 3);
 
             ev.event_type = DRAW_TILE_FROM_MAP;
             ev.params[0] = 16 + apple.x * 16;
@@ -182,7 +195,13 @@ public:
 
     void cleanup() override
     {
-        gfx->clearTexture(TEXTURE_BINDING_0);
+        // gfx->clearTexture(TEXTURE_BINDING_0);
+        Event ev;
+        ev.event_type = CLEAR_TEXTURE;
+        ev.params[0] = TEXTURE_BINDING_0;
+        active_object_post(object, ev);
+
+        Serial.println("Lol!");
 
         game_over = false;
         snake_length = 3;

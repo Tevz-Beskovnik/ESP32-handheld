@@ -24,7 +24,7 @@ void setup(void)
   object.dispatcher = graphics_dispatcher;
   object.params = console.get_gfx();
   object.task_name = "Graphics";
-  object.queue = xQueueCreate(20, sizeof(Event));
+  object.queue = xQueueCreate(100, sizeof(Event));
 
   active_object_start(&object);
 

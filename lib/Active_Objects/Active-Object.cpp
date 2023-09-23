@@ -35,7 +35,7 @@ void active_object_start(Active *object)
 
     TaskHandle_t handle;
 
-    xTaskCreatePinnedToCore(active_object_task, object->task_name, 2000, (void *)object, configMAX_PRIORITIES - 1, &handle, 0);
+    xTaskCreatePinnedToCore(active_object_task, object->task_name, 40000, (void *)object, configMAX_PRIORITIES - 1, &handle, 0);
     configASSERT(handle);
 }
 

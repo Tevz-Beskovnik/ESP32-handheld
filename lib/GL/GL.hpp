@@ -210,6 +210,9 @@ private:
 #define REFRESH_LINES 39
 #define CLEAR_DISPLAY_BUFFER 40
 #define PRINT_LN 41
+#define PRINTF1 42
+#define PRINTF2 43
+#define PRINTF3 44
 
 bool graphics_dispatcher(Event *ev, void *args);
 
