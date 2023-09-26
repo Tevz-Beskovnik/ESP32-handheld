@@ -25,8 +25,6 @@ Console::Console(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screen_width, uin
     apps[CONSOLE_INTERFACE] = (Application *)console_UI;
 
     contextBuffer = gfx->getContext();
-
-    apps[CONSOLE_INTERFACE]->setup();
 }
 
 Console::~Console()
@@ -41,6 +39,11 @@ Console::~Console()
     delete gfx;
 
     delete spi_driver;
+}
+
+void Console::setup()
+{
+    apps[CONSOLE_INTERFACE]->setup();
 }
 
 void Console::loop()

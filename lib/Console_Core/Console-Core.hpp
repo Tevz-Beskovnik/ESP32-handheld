@@ -36,6 +36,8 @@ public:
 
     ~Console();
 
+    void setup();
+
     void loop();
 
     void set_active_object(Active *object);

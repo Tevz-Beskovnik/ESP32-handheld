@@ -23,9 +23,9 @@
 class Keyboard
 {
 public:
-    explicit Keyboard(GL *gfx);
+    explicit Keyboard(Active *object);
 
-    Keyboard(GL *gfx, bool caps);
+    Keyboard(Active *object, bool caps);
 
     char prompt();
 
@@ -52,7 +52,7 @@ private:
 
     uint8_t keyboard_type;
 
-    GL *gl = nullptr;
+    Active *object = nullptr;
 
     uint8_t char_k_len = 57;
     uint8_t num_k_len = 12;

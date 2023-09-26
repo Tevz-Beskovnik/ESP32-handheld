@@ -17,7 +17,7 @@ Active object;
 
 void setup(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(2000);
   Serial.println("Hello!");
 
@@ -33,6 +33,8 @@ void setup(void)
   console.add_application(new Game1());
   console.add_application(new Game2());
   console.add_application(new Snake());
+
+  console.setup();
 
   Serial.println("Texture loaded");
   Serial.printf("Flash size: %i\n", ESP.getFlashChipSize());
