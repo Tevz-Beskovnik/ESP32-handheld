@@ -25,8 +25,6 @@ Console::Console(uint8_t clk, uint8_t di, uint8_t cs, uint16_t screen_width, uin
     apps[CONSOLE_INTERFACE] = (Application *)console_UI;
 
     contextBuffer = gfx->getContext();
-
-    apps[CONSOLE_INTERFACE]->setup();
 }
 
 Console::~Console()
@@ -43,6 +41,11 @@ Console::~Console()
     delete spi_driver;
 }
 
+void Console::setup()
+{
+    apps[CONSOLE_INTERFACE]->setup();
+}
+
 void Console::loop()
 {
     if (!apps[active_game]->loop())
@@ -55,6 +58,11 @@ void Console::loop()
     }
 }
 
+void Console::set_active_object(Active *object)
+{
+    Application::set_active_object(object);
+}
+
 bool Console::add_application(Application *app)
 {
     if (number_of_games == 5)
@@ -65,4 +73,9 @@ bool Console::add_application(Application *app)
     console_UI->add_name(app->get_name());
 
     return true;
+}
+
+GL *Console::get_gfx() const
+{
+    return gfx;
 }

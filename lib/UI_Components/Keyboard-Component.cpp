@@ -1,13 +1,13 @@
-#include <keyboard.hpp>
+#include <Keyboard-Component.hpp>
 
-Keyboard::Keyboard(GL *gfx)
-    : gl(gfx), input(255)
+Keyboard::Keyboard(Active *object)
+    : object(object), input(255)
 {
     ;
 }
 
-Keyboard::Keyboard(GL *gfx, bool caps)
-    : gl(gfx), cursor_pos(0), caps(caps), input(255)
+Keyboard::Keyboard(Active *object, bool caps)
+    : object(object), cursor_pos(0), caps(caps), input(255)
 {
     ;
 }

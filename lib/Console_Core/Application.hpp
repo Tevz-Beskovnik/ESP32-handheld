@@ -1,6 +1,7 @@
 #pragma once
 
-#include <keyboard.hpp>
+#include <Keyboard-Component.hpp>
+#include <Active-Object.hpp>
 #include <GL.hpp>
 
 class Application
@@ -11,6 +12,8 @@ public:
     static void set_gfx(GL *gfx);
 
     static void set_kb(Keyboard *kb);
+
+    static void set_active_object(Active *object);
 
     [[nodiscard]] const char *get_name() const;
 
@@ -26,4 +29,6 @@ protected:
     static GL *gfx;
 
     static Keyboard *kb;
+
+    static Active *object;
 };
